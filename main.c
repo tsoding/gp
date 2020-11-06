@@ -94,7 +94,7 @@ Agent random_agent(void)
 {
     Agent agent = {0};
     agent.pos_x = random_int_range(0, BOARD_WIDTH);
-    agent.pos_y = random_int_range(0, BOARD_WIDTH);
+    agent.pos_y = random_int_range(0, BOARD_HEIGHT);
     agent.dir = random_dir();
     agent.hunger = 100;
     agent.health = 100;
