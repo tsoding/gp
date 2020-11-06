@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
+#include <SDL2_gfxPrimitives.h>
 
 #include "./style.h"
 
@@ -124,18 +125,26 @@ void init_agents(void)
 
 void render_agent(SDL_Renderer *renderer, Agent agent)
 {
-    sdl_set_color_hex(renderer, AGENT_COLOR);
-
 #define AGENT_PADDING 20
 
-    SDL_Rect rect = {
-        (int) floorf(agent.pos_x * CELL_WIDTH + AGENT_PADDING),
-        (int) floorf(agent.pos_y * CELL_HEIGHT + AGENT_PADDING),
-        (int) floorf(CELL_WIDTH - 2 * AGENT_PADDING),
-        (int) floorf(CELL_HEIGHT - 2 * AGENT_PADDING),
-    };
-
-    scc(SDL_RenderFillRect(renderer, &rect));
+    filledTrigonColor(
+        renderer,
+        (Sint16) floorf(agent.pos_x * CELL_WIDTH + AGENT_PADDING),
+        (Sint16) floorf(agent.pos_y * CELL_HEIGHT + AGENT_PADDING),
+        (Sint16) floorf(agent.pos_x * CELL_WIDTH + AGENT_PADDING),
+        (Sint16) floorf(agent.pos_y * CELL_HEIGHT + AGENT_PADDING + CELL_WIDTH - 2 * AGENT_PADDING),
+        (Sint16) floorf(agent.pos_x * CELL_WIDTH + AGENT_PADDING + CELL_WIDTH - 2 * AGENT_PADDING),
+        (Sint16) floorf(agent.pos_y * CELL_HEIGHT + AGENT_PADDING + (CELL_HEIGHT - 2 * AGENT_PADDING) * 0.5),
+        AGENT_COLOR);
+    aatrigonColor(
+        renderer,
+        (Sint16) floorf(agent.pos_x * CELL_WIDTH + AGENT_PADDING),
+        (Sint16) floorf(agent.pos_y * CELL_HEIGHT + AGENT_PADDING),
+        (Sint16) floorf(agent.pos_x * CELL_WIDTH + AGENT_PADDING),
+        (Sint16) floorf(agent.pos_y * CELL_HEIGHT + AGENT_PADDING + CELL_WIDTH - 2 * AGENT_PADDING),
+        (Sint16) floorf(agent.pos_x * CELL_WIDTH + AGENT_PADDING + CELL_WIDTH - 2 * AGENT_PADDING),
+        (Sint16) floorf(agent.pos_y * CELL_HEIGHT + AGENT_PADDING + (CELL_HEIGHT - 2 * AGENT_PADDING) * 0.5),
+        AGENT_COLOR);
 }
 
 void render_all_agents(SDL_Renderer *renderer)
