@@ -126,11 +126,13 @@ void render_agent(SDL_Renderer *renderer, Agent agent)
 {
     sdl_set_color_hex(renderer, AGENT_COLOR);
 
+#define AGENT_PADDING 20
+
     SDL_Rect rect = {
-        (int) floorf(agent.pos_x * CELL_WIDTH),
-        (int) floorf(agent.pos_y * CELL_HEIGHT),
-        (int) floorf(CELL_WIDTH),
-        (int) floorf(CELL_HEIGHT),
+        (int) floorf(agent.pos_x * CELL_WIDTH + AGENT_PADDING),
+        (int) floorf(agent.pos_y * CELL_HEIGHT + AGENT_PADDING),
+        (int) floorf(CELL_WIDTH - 2 * AGENT_PADDING),
+        (int) floorf(CELL_HEIGHT - 2 * AGENT_PADDING),
     };
 
     scc(SDL_RenderFillRect(renderer, &rect));
