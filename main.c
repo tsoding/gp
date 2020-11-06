@@ -80,8 +80,38 @@ void render_board_grid(SDL_Renderer *renderer)
     }
 }
 
+int random_int_range(int low, int high)
+{
+    return rand() % (high - low) + low;
+}
+
+Dir random_dir(void)
+{
+    return (Dir) random_int_range(0, 4);
+}
+
+Agent random_agent(void)
+{
+    Agent agent = {0};
+    agent.pos_x = random_int_range(0, BOARD_WIDTH);
+    agent.pos_y = random_int_range(0, BOARD_WIDTH);
+    agent.dir = random_dir();
+    agent.hunger = 100;
+    agent.health = 100;
+    return agent;
+}
+
+void init_agents(void)
+{
+    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
+        agents[i] = random_agent();
+    }
+}
+
 int main(int argc, char *argv[])
 {
+    init_agents();
+
     scc(SDL_Init(SDL_INIT_VIDEO));
 
     SDL_Window *const window = scp(SDL_CreateWindow(
