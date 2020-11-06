@@ -20,6 +20,8 @@
 #define AGENT_PADDING 15.0f
 
 #define FOODS_COUNT 4
+#define FOOD_PADDING (AGENT_PADDING)
+
 #define WALLS_COUNT 4
 
 int scc(int code)
@@ -187,15 +189,50 @@ void render_game(SDL_Renderer *renderer, const Game *game)
     }
 
     // TODO: foods are not rendered
-    // TODO: walls are not rendered
+    for (size_t i = 0; i < FOODS_COUNT; ++i) {
+        filledCircleColor(
+            renderer,
+            (int) floorf(game->foods[i].pos_x * CELL_WIDTH + CELL_WIDTH * 0.5f),
+            (int) floorf(game->foods[i].pos_y * CELL_HEIGHT + CELL_HEIGHT * 0.5f),
+            (int) floorf(fminf(CELL_WIDTH, CELL_HEIGHT) * 0.5f - FOOD_PADDING),
+            FOOD_COLOR);
+    }
+
+    for (size_t i = 0; i < WALLS_COUNT; ++i) {
+        SDL_Rect rect = {
+            (int) floorf(game->walls[i].pos_x * CELL_WIDTH),
+            (int) floorf(game->walls[i].pos_y * CELL_HEIGHT),
+            (int) floorf(CELL_WIDTH),
+            (int) floorf(CELL_HEIGHT),
+        };
+
+        sdl_set_color_hex(renderer, WALL_COLOR);
+
+        SDL_RenderFillRect(renderer, &rect);
+    }
 }
 
 void init_game(Game *game)
 {
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
         game->agents[i] = random_agent();
-        game->agents[i].dir = i;
+        game->agents[i].dir = i % 4;
     }
+
+    for (size_t i = 0; i < FOODS_COUNT; ++i) {
+        game->foods[i].pos_x = random_int_range(0, BOARD_WIDTH);
+        game->foods[i].pos_y = random_int_range(0, BOARD_HEIGHT);
+    }
+
+    for (size_t i = 0; i < WALLS_COUNT; ++i) {
+        game->walls[i].pos_x = random_int_range(0, BOARD_WIDTH);
+        game->walls[i].pos_y = random_int_range(0, BOARD_HEIGHT);
+    }
+}
+
+void step_game(Game *game)
+{
+    // TODO: stepping game is not implemented
 }
 
 Game game = {0};
@@ -225,6 +262,14 @@ int main(int argc, char *argv[])
             switch (event.type) {
             case SDL_QUIT: {
                 quit = 1;
+            } break;
+
+            case SDL_KEYDOWN: {
+                switch (event.key.keysym.sym) {
+                case SDLK_SPACE: {
+                    step_game(&game);
+                } break;
+                }
             } break;
             }
         }
