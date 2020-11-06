@@ -1,7 +1,10 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <SDL2/SDL.h>
+
+#include "./style.h"
 
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 10
@@ -13,6 +16,53 @@
 #define CELL_HEIGHT ((float) SCREEN_HEIGHT / BOARD_HEIGHT)
 
 #define AGENTS_COUNT 5
+
+
+int scc(int code)
+{
+    if (code < 0) {
+        fprintf(stderr, "SDL error: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    return code;
+}
+
+void *scp(void *ptr)
+{
+    if (ptr == NULL) {
+        fprintf(stderr, "SDL error: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    return ptr;
+}
+
+Uint8 hex_to_dec(char x)
+{
+    if ('0' <= x && x <= '9') return x - '0';
+    if ('a' <= x && x <= 'f') return x - 'a' + 10;
+    if ('A' <= x && x <= 'F') return x - 'A' + 10;
+    printf("ERROR: Incorrect hex character %c\n", x);
+    exit(1);
+}
+
+Uint8 parse_hex_byte(const char *byte_hex)
+{
+    return hex_to_dec(*byte_hex) * 0x10 + hex_to_dec(*(byte_hex + 1));
+}
+
+void sdl_set_color_hex(SDL_Renderer *renderer, const char *hex)
+{
+    size_t hex_len = strlen(hex);
+    assert(hex_len == 6);
+    scc(SDL_SetRenderDrawColor(
+            renderer,
+            parse_hex_byte(hex),
+            parse_hex_byte(hex + 2),
+            parse_hex_byte(hex + 4),
+            255));
+}
 
 typedef enum {
     DIR_RIGHT = 0,
@@ -37,29 +87,9 @@ typedef enum {
 
 Agent agents[AGENTS_COUNT];
 
-int scc(int code)
-{
-    if (code < 0) {
-        fprintf(stderr, "SDL error: %s\n", SDL_GetError());
-        exit(1);
-    }
-
-    return code;
-}
-
-void *scp(void *ptr)
-{
-    if (ptr == NULL) {
-        fprintf(stderr, "SDL error: %s\n", SDL_GetError());
-        exit(1);
-    }
-
-    return ptr;
-}
-
 void render_board_grid(SDL_Renderer *renderer)
 {
-    scc(SDL_SetRenderDrawColor(renderer, 90, 90, 90, 255));
+    sdl_set_color_hex(renderer, GRID_COLOR);
 
     for (int x = 1; x < BOARD_WIDTH; ++x) {
         scc(SDL_RenderDrawLine(
@@ -108,6 +138,27 @@ void init_agents(void)
     }
 }
 
+void render_agent(SDL_Renderer *renderer, Agent agent)
+{
+    sdl_set_color_hex(renderer, AGENT_COLOR);
+
+    SDL_Rect rect = {
+        (int) floorf(agent.pos_x * CELL_WIDTH),
+        (int) floorf(agent.pos_y * CELL_HEIGHT),
+        (int) floorf(CELL_WIDTH),
+        (int) floorf(CELL_HEIGHT),
+    };
+
+    scc(SDL_RenderFillRect(renderer, &rect));
+}
+
+void render_all_agents(SDL_Renderer *renderer)
+{
+    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
+        render_agent(renderer, agents[i]);
+    }
+}
+
 int main(int argc, char *argv[])
 {
     init_agents();
@@ -137,14 +188,14 @@ int main(int argc, char *argv[])
             }
         }
 
-        scc(SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255));
+        sdl_set_color_hex(renderer, BACKGROUND_COLOR);
         scc(SDL_RenderClear(renderer));
 
         render_board_grid(renderer);
+        render_all_agents(renderer);
 
         SDL_RenderPresent(renderer);
     }
-
 
     SDL_Quit();
 
