@@ -1,9 +1,8 @@
 #ifndef STYLE_H_
 #define STYLE_H_
 
-// TODO: replace strings with hex literals Pepege
-#define BACKGROUND_COLOR "353535"
-#define GRID_COLOR       "748CAB"
-#define AGENT_COLOR      "DA2C38"
+#define BACKGROUND_COLOR 0x353535FF
+#define GRID_COLOR       0x748CABFF
+#define AGENT_COLOR      0xDA2C38FF
 
 #endif  // STYLE_H_
