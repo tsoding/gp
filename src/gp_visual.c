@@ -52,8 +52,10 @@ void render_agent(SDL_Renderer *renderer, Agent agent)
     float x3 = agents_dirs[agent.dir][4] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos.x * CELL_WIDTH  + AGENT_PADDING;
     float y3 = agents_dirs[agent.dir][5] * (CELL_HEIGHT - AGENT_PADDING * 2) + agent.pos.y * CELL_HEIGHT + AGENT_PADDING;
 
-    filledTrigonColor(renderer, x1, y1, x2, y2, x3, y3, AGENT_COLOR);
-    aatrigonColor(renderer, x1, y1, x2, y2, x3, y3, AGENT_COLOR);
+    Uint32 color = agent.health <= 0 ? AGENT_DEAD_COLOR : AGENT_ALIVE_COLOR;
+
+    filledTrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, HEX_COLOR(color));
+    aatrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, HEX_COLOR(color));
 }
 
 void render_game(SDL_Renderer *renderer, const Game *game)
@@ -62,14 +64,15 @@ void render_game(SDL_Renderer *renderer, const Game *game)
         render_agent(renderer, game->agents[i]);
     }
 
-    // TODO: foods are not rendered
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
-        filledCircleRGBA(
-            renderer,
-            (int) floorf(game->foods[i].pos.x * CELL_WIDTH + CELL_WIDTH * 0.5f),
-            (int) floorf(game->foods[i].pos.y * CELL_HEIGHT + CELL_HEIGHT * 0.5f),
-            (int) floorf(fminf(CELL_WIDTH, CELL_HEIGHT) * 0.5f - FOOD_PADDING),
-            HEX_COLOR(FOOD_COLOR));
+        if (!game->foods[i].eaten) {
+            filledCircleRGBA(
+                renderer,
+                (int) floorf(game->foods[i].pos.x * CELL_WIDTH + CELL_WIDTH * 0.5f),
+                (int) floorf(game->foods[i].pos.y * CELL_HEIGHT + CELL_HEIGHT * 0.5f),
+                (int) floorf(fminf(CELL_WIDTH, CELL_HEIGHT) * 0.5f - FOOD_PADDING),
+                HEX_COLOR(FOOD_COLOR));
+        }
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {

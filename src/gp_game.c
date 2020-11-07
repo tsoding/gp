@@ -268,22 +268,22 @@ void execute_action(Game *game, size_t agent_index, Action action)
 
 void step_game(Game *game)
 {
-    // Interpret genes
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        for (size_t j = 0; j < JEANS_COUNT; ++j) {
-            Gene gene = game->chromos[i].jeans[j];
-            if (gene.state == game->agents[i].state && gene.env == env_of_agent(game, i)) {
-                execute_action(game, i, gene.action);
-                game->agents[i].state = gene.next_state;
+        if (game->agents[i].health > 0) {
+            // Interpret genes
+            for (size_t j = 0; j < JEANS_COUNT; ++j) {
+                Gene gene = game->chromos[i].jeans[j];
+                if (gene.state == game->agents[i].state && gene.env == env_of_agent(game, i)) {
+                    execute_action(game, i, gene.action);
+                    game->agents[i].state = gene.next_state;
+                }
             }
-        }
-    }
 
-    // Handle hunger
-    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        game->agents[i].hunger -= STEP_HUNGER_DAMAGE;
-        if (game->agents[i].hunger <= 0) {
-            game->agents[i].health = 0;
+            // Apply hunger
+            game->agents[i].hunger -= STEP_HUNGER_DAMAGE;
+            if (game->agents[i].hunger <= 0) {
+                game->agents[i].health = 0;
+            }
         }
     }
 }
