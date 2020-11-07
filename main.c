@@ -8,8 +8,8 @@
 
 #include "./style.h"
 
-#define BOARD_WIDTH 10
-#define BOARD_HEIGHT 10
+#define BOARD_WIDTH 30
+#define BOARD_HEIGHT 30
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 800
@@ -17,21 +17,22 @@
 #define CELL_WIDTH ((float) SCREEN_WIDTH / BOARD_WIDTH)
 #define CELL_HEIGHT ((float) SCREEN_HEIGHT / BOARD_HEIGHT)
 
-#define AGENTS_COUNT 5
+#define AGENTS_COUNT 60
 #define AGENT_PADDING (fminf(CELL_WIDTH, CELL_HEIGHT) / 5.0f)
 
-#define FOODS_COUNT 5
+#define FOODS_COUNT 60
 #define FOOD_PADDING (AGENT_PADDING)
 
-#define WALLS_COUNT 5
+#define WALLS_COUNT 60
 
-#define JEANS_COUNT 20
+#define JEANS_COUNT 10
 
 #define FOOD_HUNGER_RECOVERY 10
 #define STEP_HUNGER_DAMAGE 5
 #define HUNGER_MAX 100
 #define HEALTH_MAX 100
 #define ATTACK_DAMAGE 10
+#define STATES_COUNT 5
 
 typedef struct {
     int x, y;
@@ -107,6 +108,18 @@ typedef enum {
     ENV_COUNT,
 } Env;
 
+const char *env_as_cstr(Env env)
+{
+    switch (env) {
+    case ENV_NOTHING: return "ENV_NOTHING";
+    case ENV_AGENT:   return "ENV_AGENT";
+    case ENV_FOOD:    return "ENV_FOOD";
+    case ENV_WALL:    return "ENV_WALL";
+    default: {}
+    }
+    assert(0 && "Unreachable");
+}
+
 typedef enum {
     ACTION_NOP = 0,
     ACTION_STEP,
@@ -116,6 +129,20 @@ typedef enum {
     ACTION_TURN_RIGHT,
     ACTION_COUNT,
 } Action;
+
+const char *action_as_cstr(Action action)
+{
+    switch (action) {
+    case ACTION_NOP:        return "ACTION_NOP";
+    case ACTION_STEP:       return "ACTION_STEP";
+    case ACTION_EAT:        return "ACTION_EAT";
+    case ACTION_ATTACK:     return "ACTION_ATTACK";
+    case ACTION_TURN_LEFT:  return "ACTION_TURN_LEFT";
+    case ACTION_TURN_RIGHT: return "ACTION_TURN_RIGHT";
+    default: {}
+    }
+    assert(0 && "Unreachable");
+}
 
 typedef struct {
     State state;
@@ -128,6 +155,17 @@ typedef struct {
     size_t count;
     Gene jeans[JEANS_COUNT];
 } Chromo;
+
+void print_chromo(FILE *stream, const Chromo *chromo)
+{
+    for (size_t i = 0; i < JEANS_COUNT; ++i) {
+        fprintf(stream, "%d %s %s %d\n",
+                chromo->jeans[i].state,
+                env_as_cstr(chromo->jeans[i].env),
+                action_as_cstr(chromo->jeans[i].action),
+                chromo->jeans[i].next_state);
+    }
+}
 
 typedef struct {
     Coord pos;
@@ -292,10 +330,10 @@ void init_game(Game *game)
         game->agents[i].dir = i % 4;
 
         for (size_t j = 0; j < JEANS_COUNT; ++j) {
-            game->chromos[i].jeans[j].state = random_int_range(0, JEANS_COUNT);
+            game->chromos[i].jeans[j].state = random_int_range(0, STATES_COUNT);
             game->chromos[i].jeans[j].env = random_env();
             game->chromos[i].jeans[j].action = random_action();
-            game->chromos[i].jeans[j].next_state = random_int_range(0, JEANS_COUNT);
+            game->chromos[i].jeans[j].next_state = random_int_range(0, STATES_COUNT);
         }
     }
 
@@ -463,6 +501,9 @@ int main(int argc, char *argv[])
     srand(time(0));
 
     init_game(&game);
+
+    static_assert(AGENTS_COUNT > 0, "Not enough agents");
+    print_chromo(stdout, &game.chromos[0]);
 
     scc(SDL_Init(SDL_INIT_VIDEO));
 
