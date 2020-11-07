@@ -44,15 +44,11 @@ void *scp(void *ptr)
     return ptr;
 }
 
-void sdl_set_color_hex(SDL_Renderer *renderer, Uint32 hex)
-{
-    scc(SDL_SetRenderDrawColor(
-            renderer,
-            (hex >> (3 * 8)) & 0xFF,
-            (hex >> (2 * 8)) & 0xFF,
-            (hex >> (1 * 8)) & 0xFF,
-            (hex >> (0 * 8)) & 0xFF));
-}
+#define HEX_COLOR(hex)                      \
+    ((hex) >> (3 * 8)) & 0xFF,              \
+    ((hex) >> (2 * 8)) & 0xFF,              \
+    ((hex) >> (1 * 8)) & 0xFF,              \
+    ((hex) >> (0 * 8)) & 0xFF
 
 typedef enum {
     DIR_RIGHT = 0,
@@ -127,7 +123,7 @@ typedef struct {
 
 void render_board_grid(SDL_Renderer *renderer)
 {
-    sdl_set_color_hex(renderer, GRID_COLOR);
+    SDL_SetRenderDrawColor(renderer, HEX_COLOR(GRID_COLOR));
 
     for (int x = 1; x < BOARD_WIDTH; ++x) {
         scc(SDL_RenderDrawLine(
@@ -190,12 +186,12 @@ void render_game(SDL_Renderer *renderer, const Game *game)
 
     // TODO: foods are not rendered
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
-        filledCircleColor(
+        filledCircleRGBA(
             renderer,
             (int) floorf(game->foods[i].pos_x * CELL_WIDTH + CELL_WIDTH * 0.5f),
             (int) floorf(game->foods[i].pos_y * CELL_HEIGHT + CELL_HEIGHT * 0.5f),
             (int) floorf(fminf(CELL_WIDTH, CELL_HEIGHT) * 0.5f - FOOD_PADDING),
-            FOOD_COLOR);
+            HEX_COLOR(FOOD_COLOR));
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
@@ -206,7 +202,7 @@ void render_game(SDL_Renderer *renderer, const Game *game)
             (int) floorf(CELL_HEIGHT),
         };
 
-        sdl_set_color_hex(renderer, WALL_COLOR);
+        SDL_SetRenderDrawColor(renderer, HEX_COLOR(WALL_COLOR));
 
         SDL_RenderFillRect(renderer, &rect);
     }
@@ -274,7 +270,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        sdl_set_color_hex(renderer, BACKGROUND_COLOR);
+        SDL_SetRenderDrawColor(renderer, HEX_COLOR(BACKGROUND_COLOR));
         scc(SDL_RenderClear(renderer));
 
         render_board_grid(renderer);
