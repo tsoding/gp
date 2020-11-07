@@ -276,6 +276,7 @@ void step_game(Game *game)
                 if (gene.state == game->agents[i].state && gene.env == env_of_agent(game, i)) {
                     execute_action(game, i, gene.action);
                     game->agents[i].state = gene.next_state;
+                    break;
                 }
             }
 
