@@ -207,16 +207,6 @@ Coord random_empty_coord_on_board(const Game *game)
     return result;
 }
 
-Agent random_agent(const Game *game)
-{
-    Agent agent = {0};
-    agent.pos = random_empty_coord_on_board(game);
-    agent.dir = random_dir();
-    agent.hunger = 100;
-    agent.health = 100;
-    return agent;
-}
-
 void render_agent(SDL_Renderer *renderer, Agent agent)
 {
     float x1 = agents_dirs[agent.dir][0] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos.x * CELL_WIDTH  + AGENT_PADDING;
@@ -263,7 +253,10 @@ void render_game(SDL_Renderer *renderer, const Game *game)
 void init_game(Game *game)
 {
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        game->agents[i] = random_agent(game);
+        game->agents[i].pos = random_empty_coord_on_board(game);
+        game->agents[i].dir = random_dir();
+        game->agents[i].hunger = 100;
+        game->agents[i].health = 100;
         game->agents[i].dir = i % 4;
     }
 
