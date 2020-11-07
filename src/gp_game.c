@@ -25,7 +25,7 @@ const char *env_as_cstr(Env env)
     case ENV_AGENT:   return "ENV_AGENT";
     case ENV_FOOD:    return "ENV_FOOD";
     case ENV_WALL:    return "ENV_WALL";
-    default: {}
+    case ENV_COUNT:   {}
     }
     assert(0 && "Unreachable");
 }
@@ -39,7 +39,7 @@ const char *action_as_cstr(Action action)
     case ACTION_ATTACK:     return "ACTION_ATTACK";
     case ACTION_TURN_LEFT:  return "ACTION_TURN_LEFT";
     case ACTION_TURN_RIGHT: return "ACTION_TURN_RIGHT";
-    default: {}
+    case ACTION_COUNT:      {}
     }
     assert(0 && "Unreachable");
 }
@@ -321,7 +321,7 @@ const char *dir_as_cstr(Dir dir)
     case DIR_UP:    return "DIR_UP";
     case DIR_LEFT:  return "DIR_LEFT";
     case DIR_DOWN:  return "DIR_DOWN";
-    default: {}
+    case DIR_COUNT: {}
     }
     assert(0 && "Unreachable");
 }
