@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <SDL.h>
 #include <SDL2_gfxPrimitives.h>
@@ -23,6 +24,15 @@
 #define FOOD_PADDING (AGENT_PADDING)
 
 #define WALLS_COUNT 4
+
+typedef struct {
+    int x, y;
+} Coord;
+
+int coord_equals(Coord a, Coord b)
+{
+    return a.x == b.x && a.y == b.y;
+}
 
 int scc(int code)
 {
@@ -82,6 +92,8 @@ typedef enum {
     ACTION_STEP,
     ACTION_EAT,
     ACTION_ATTACK,
+    ACTION_TURN_LEFT,
+    ACTION_TURN_RIGHT,
 } Action;
 
 typedef struct {
@@ -97,7 +109,7 @@ typedef struct {
 } Brain;
 
 typedef struct {
-    int pos_x, pos_y;
+    Coord pos;
     Dir dir;
     int hunger;
     int health;
@@ -106,13 +118,11 @@ typedef struct {
 
 typedef struct {
     int eaten;
-    int pos_x;
-    int pos_y;
+    Coord pos;
 } Food;
 
 typedef struct {
-    int pos_x;
-    int pos_y;
+    Coord pos;
 } Wall;
 
 typedef struct {
@@ -120,6 +130,9 @@ typedef struct {
     Food foods[FOODS_COUNT];
     Wall walls[WALLS_COUNT];
 } Game;
+
+static_assert(AGENTS_COUNT + FOODS_COUNT + WALLS_COUNT <= BOARD_WIDTH * BOARD_HEIGHT,
+              "Too many entities. Can't fit all of them on the board");
 
 void render_board_grid(SDL_Renderer *renderer)
 {
@@ -154,11 +167,50 @@ Dir random_dir(void)
     return (Dir) random_int_range(0, 4);
 }
 
-Agent random_agent(void)
+Coord random_coord_on_board(void)
+{
+    Coord result;
+    result.x = random_int_range(0, BOARD_WIDTH);
+    result.y = random_int_range(0, BOARD_HEIGHT);
+    return result;
+}
+
+int is_cell_empty(const Game *game, Coord pos)
+{
+    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
+        if (coord_equals(game->agents[i].pos, pos)) {
+            return 0;
+        }
+    }
+
+    for (size_t i = 0; i < FOODS_COUNT; ++i) {
+        if (coord_equals(game->foods[i].pos, pos)) {
+            return 0;
+        }
+    }
+
+    for (size_t i = 0; i < WALLS_COUNT; ++i) {
+        if (coord_equals(game->walls[i].pos, pos)) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+Coord random_empty_coord_on_board(const Game *game)
+{
+    Coord result = random_coord_on_board();
+    while (!is_cell_empty(game, result)) {
+        result = random_coord_on_board();
+    }
+    return result;
+}
+
+Agent random_agent(const Game *game)
 {
     Agent agent = {0};
-    agent.pos_x = random_int_range(0, BOARD_WIDTH);
-    agent.pos_y = random_int_range(0, BOARD_HEIGHT);
+    agent.pos = random_empty_coord_on_board(game);
     agent.dir = random_dir();
     agent.hunger = 100;
     agent.health = 100;
@@ -167,12 +219,12 @@ Agent random_agent(void)
 
 void render_agent(SDL_Renderer *renderer, Agent agent)
 {
-    float x1 = agents_dirs[agent.dir][0] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos_x * CELL_WIDTH  + AGENT_PADDING;
-    float y1 = agents_dirs[agent.dir][1] * (CELL_HEIGHT - AGENT_PADDING * 2) + agent.pos_y * CELL_HEIGHT + AGENT_PADDING;
-    float x2 = agents_dirs[agent.dir][2] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos_x * CELL_WIDTH  + AGENT_PADDING;
-    float y2 = agents_dirs[agent.dir][3] * (CELL_HEIGHT - AGENT_PADDING * 2) + agent.pos_y * CELL_HEIGHT + AGENT_PADDING;
-    float x3 = agents_dirs[agent.dir][4] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos_x * CELL_WIDTH  + AGENT_PADDING;
-    float y3 = agents_dirs[agent.dir][5] * (CELL_HEIGHT - AGENT_PADDING * 2) + agent.pos_y * CELL_HEIGHT + AGENT_PADDING;
+    float x1 = agents_dirs[agent.dir][0] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos.x * CELL_WIDTH  + AGENT_PADDING;
+    float y1 = agents_dirs[agent.dir][1] * (CELL_HEIGHT - AGENT_PADDING * 2) + agent.pos.y * CELL_HEIGHT + AGENT_PADDING;
+    float x2 = agents_dirs[agent.dir][2] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos.x * CELL_WIDTH  + AGENT_PADDING;
+    float y2 = agents_dirs[agent.dir][3] * (CELL_HEIGHT - AGENT_PADDING * 2) + agent.pos.y * CELL_HEIGHT + AGENT_PADDING;
+    float x3 = agents_dirs[agent.dir][4] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos.x * CELL_WIDTH  + AGENT_PADDING;
+    float y3 = agents_dirs[agent.dir][5] * (CELL_HEIGHT - AGENT_PADDING * 2) + agent.pos.y * CELL_HEIGHT + AGENT_PADDING;
 
     filledTrigonColor(renderer, x1, y1, x2, y2, x3, y3, AGENT_COLOR);
     aatrigonColor(renderer, x1, y1, x2, y2, x3, y3, AGENT_COLOR);
@@ -188,16 +240,16 @@ void render_game(SDL_Renderer *renderer, const Game *game)
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
         filledCircleRGBA(
             renderer,
-            (int) floorf(game->foods[i].pos_x * CELL_WIDTH + CELL_WIDTH * 0.5f),
-            (int) floorf(game->foods[i].pos_y * CELL_HEIGHT + CELL_HEIGHT * 0.5f),
+            (int) floorf(game->foods[i].pos.x * CELL_WIDTH + CELL_WIDTH * 0.5f),
+            (int) floorf(game->foods[i].pos.y * CELL_HEIGHT + CELL_HEIGHT * 0.5f),
             (int) floorf(fminf(CELL_WIDTH, CELL_HEIGHT) * 0.5f - FOOD_PADDING),
             HEX_COLOR(FOOD_COLOR));
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
         SDL_Rect rect = {
-            (int) floorf(game->walls[i].pos_x * CELL_WIDTH),
-            (int) floorf(game->walls[i].pos_y * CELL_HEIGHT),
+            (int) floorf(game->walls[i].pos.x * CELL_WIDTH),
+            (int) floorf(game->walls[i].pos.y * CELL_HEIGHT),
             (int) floorf(CELL_WIDTH),
             (int) floorf(CELL_HEIGHT),
         };
@@ -211,18 +263,16 @@ void render_game(SDL_Renderer *renderer, const Game *game)
 void init_game(Game *game)
 {
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        game->agents[i] = random_agent();
+        game->agents[i] = random_agent(game);
         game->agents[i].dir = i % 4;
     }
 
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
-        game->foods[i].pos_x = random_int_range(0, BOARD_WIDTH);
-        game->foods[i].pos_y = random_int_range(0, BOARD_HEIGHT);
+        game->foods[i].pos = random_empty_coord_on_board(game);
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        game->walls[i].pos_x = random_int_range(0, BOARD_WIDTH);
-        game->walls[i].pos_y = random_int_range(0, BOARD_HEIGHT);
+        game->walls[i].pos = random_empty_coord_on_board(game);
     }
 }
 
@@ -235,6 +285,8 @@ Game game = {0};
 
 int main(int argc, char *argv[])
 {
+    srand(time(0));
+
     init_game(&game);
 
     scc(SDL_Init(SDL_INIT_VIDEO));
