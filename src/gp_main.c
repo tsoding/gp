@@ -9,9 +9,6 @@ int main(int argc, char *argv[])
 
     init_game(&game);
 
-    static_assert(AGENTS_COUNT > 0, "Not enough agents");
-    print_chromo(stdout, &game.chromos[0]);
-
     scc(SDL_Init(SDL_INIT_VIDEO));
 
     SDL_Window *const window = scp(SDL_CreateWindow(
@@ -44,6 +41,17 @@ int main(int argc, char *argv[])
                 case SDLK_r: {
                     init_game(&game);
                 } break;
+                }
+            } break;
+
+            case SDL_MOUSEBUTTONDOWN: {
+                Coord pos;
+                pos.x = (int) floorf(event.button.x / CELL_WIDTH);
+                pos.y = (int) floorf(event.button.y / CELL_HEIGHT);
+                Agent *agent = agent_at(&game, pos);
+
+                if (agent) {
+                    print_agent(stdout, agent);
                 }
             } break;
             }

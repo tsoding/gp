@@ -287,3 +287,37 @@ void step_game(Game *game)
         }
     }
 }
+
+Agent *agent_at(Game *game, Coord pos)
+{
+    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
+        if (coord_equals(game->agents[i].pos, pos)) {
+            return &game->agents[i];
+        }
+    }
+
+    return NULL;
+}
+
+void print_agent(FILE *stream, Agent *agent)
+{
+    printf("Agent {\n");
+    printf("  .pos = (%d, %d)\n", agent->pos.x, agent->pos.y);
+    printf("  .dir = %s\n", dir_as_cstr(agent->dir));
+    printf("  .hunger = %d\n", agent->hunger);
+    printf("  .health = %d\n", agent->health);
+    printf("  .state = %d\n", agent->state);
+    printf("}\n");
+}
+
+const char *dir_as_cstr(Dir dir)
+{
+    switch (dir) {
+    case DIR_RIGHT: return "DIR_RIGHT";
+    case DIR_UP:    return "DIR_UP";
+    case DIR_LEFT:  return "DIR_LEFT";
+    case DIR_DOWN:  return "DIR_DOWN";
+    default: {}
+    }
+    assert(0 && "Unreachable");
+}

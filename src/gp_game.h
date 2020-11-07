@@ -29,6 +29,8 @@ typedef enum {
     DIR_COUNT,
 } Dir;
 
+const char *dir_as_cstr(Dir dir);
+
 typedef int State;
 
 typedef enum {
@@ -75,6 +77,8 @@ typedef struct {
     State state;
 } Agent;
 
+void print_agent(FILE *stream, Agent *agent);
+
 typedef struct {
     int eaten;
     Coord pos;
@@ -103,6 +107,8 @@ Action random_action(void);
 
 int mod_int(int a, int b);
 int is_cell_empty(const Game *game, Coord pos);
+
+Agent *agent_at(Game *game, Coord coord);
 
 Coord coord_infront_of_agent(const Agent *agent);
 Food *food_infront_of_agent(Game *game, size_t agent_index);
