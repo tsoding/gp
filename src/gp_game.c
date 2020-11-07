@@ -123,6 +123,7 @@ void init_game(Game *game)
         game->agents[i].hunger = HUNGER_MAX;
         game->agents[i].health = HEALTH_MAX;
         game->agents[i].dir = i % 4;
+        game->agents[i].lifetime = 0;
 
         for (size_t j = 0; j < JEANS_COUNT; ++j) {
             game->chromos[i].jeans[j].state = random_int_range(0, STATES_COUNT);
@@ -285,6 +286,8 @@ void step_game(Game *game)
             if (game->agents[i].hunger <= 0) {
                 game->agents[i].health = 0;
             }
+
+            game->agents[i].lifetime += 1;
         }
     }
 }

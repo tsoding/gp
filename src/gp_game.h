@@ -1,11 +1,11 @@
 #ifndef GP_GAME_H_
 #define GP_GAME_H_
 
-#define BOARD_WIDTH 30
-#define BOARD_HEIGHT 30
+#define BOARD_WIDTH 100
+#define BOARD_HEIGHT 100
 
-#define AGENTS_COUNT 60
-#define FOODS_COUNT 60
+#define AGENTS_COUNT 2000
+#define FOODS_COUNT 1000
 #define WALLS_COUNT 60
 #define JEANS_COUNT 10
 #define FOOD_HUNGER_RECOVERY 10
@@ -14,6 +14,11 @@
 #define HEALTH_MAX 100
 #define ATTACK_DAMAGE 10
 #define STATES_COUNT 5
+
+// TODO: we need to simplify the rules of the game
+//  - Remove attack action. Make moving towards agents an attack.
+//  - Remove eat action. Make moving towards food an eat.
+//  - ...
 
 typedef struct {
     int x, y;
@@ -75,6 +80,7 @@ typedef struct {
     int hunger;
     int health;
     State state;
+    int lifetime;
 } Agent;
 
 void print_agent(FILE *stream, Agent *agent);

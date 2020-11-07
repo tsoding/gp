@@ -41,6 +41,14 @@ int main(int argc, char *argv[])
                 case SDLK_r: {
                     init_game(&game);
                 } break;
+
+                case SDLK_n: {
+                    // TODO: introduce action that manually generates a new generation
+                    //   - Take the agents that survived longest
+                    //   - Crossover their jeans
+                    //   - Mutate
+                    //   - Make a new generation
+                } break;
                 }
             } break;
 
@@ -60,7 +68,6 @@ int main(int argc, char *argv[])
         SDL_SetRenderDrawColor(renderer, HEX_COLOR(BACKGROUND_COLOR));
         scc(SDL_RenderClear(renderer));
 
-        render_board_grid(renderer);
         render_game(renderer, &game);
 
         SDL_RenderPresent(renderer);
