@@ -2,6 +2,8 @@
 
 Just a Playground Repo for my Genetic Programming experiments. I have no priori exprience with Genetic Programming and Algorithms.
 
+![screenshot](./assets/screenshot.png)
+
 ## Idea
 
 - Write a simple game where agents are trying to survive in an environment fighting for food and with each other.
