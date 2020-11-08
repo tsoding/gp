@@ -11,29 +11,29 @@ Just a Playground Repo for my Genetic Programming experiments. I have no priori 
 ### Environment
 
 <!-- TODO: Document environment -->
-TBD
+*TBD*
 
 ### Entities
 
 <!-- TODO: Document entities -->
-TBD
+*TBD*
 
 ### Agents
 
 #### State
 
 <!-- TODO: Document agents state -->
-TBD
+*TBD*
 
 #### Action
 
 <!-- TODO: Document available agents actions -->
-TBD
+*TBD*
 
 #### Chromosomes
 
 <!-- TODO: Document agents chromosomes -->
-TBD
+*TBD*
 
 ## Dependencies
 
