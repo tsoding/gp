@@ -1,6 +1,6 @@
 # Genetic Programming
 
-Just a Playground Repo for my Genetic Programming experiments. I have no priori exprience with Genetic Programming and Algorithms.
+Just a Playground Repo for my Genetic Programming experiments. I have no prior exprience with Genetic Programming and Algorithms.
 
 ![demo](./assets/demo.png)
 
