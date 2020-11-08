@@ -39,7 +39,6 @@ void *scp(void *ptr);
     ((hex) >> (1 * 8)) & 0xFF,              \
     ((hex) >> (0 * 8)) & 0xFF
 
-void render_board_grid(SDL_Renderer *renderer);
 void render_agent(SDL_Renderer *renderer, Agent agent);
 void render_game(SDL_Renderer *renderer, const Game *game);
 

@@ -20,29 +20,6 @@ void *scp(void *ptr)
     return ptr;
 }
 
-void render_board_grid(SDL_Renderer *renderer)
-{
-    SDL_SetRenderDrawColor(renderer, HEX_COLOR(GRID_COLOR));
-
-    for (int x = 1; x < BOARD_WIDTH; ++x) {
-        scc(SDL_RenderDrawLine(
-                renderer,
-                x * CELL_WIDTH,
-                0,
-                x * CELL_WIDTH,
-                SCREEN_HEIGHT));
-    }
-
-    for (int y = 1; y < BOARD_HEIGHT; ++y) {
-        scc(SDL_RenderDrawLine(
-                renderer,
-                0,
-                y * CELL_HEIGHT,
-                SCREEN_WIDTH,
-                y * CELL_HEIGHT));
-    }
-}
-
 void render_agent(SDL_Renderer *renderer, Agent agent)
 {
     float x1 = agents_dirs[agent.dir][0] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos.x * CELL_WIDTH  + AGENT_PADDING;
