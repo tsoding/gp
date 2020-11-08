@@ -2,25 +2,30 @@
 
 Just a Playground Repo for my Genetic Programming experiments
 
-## Quick Start
+## Dependencies
 
-Dependencies: [SDL2], [SDL2_gfx]
+Should be available on Windows, MacOS, and the majority of Linux distros.
+
+- [SDL2]
+- [SDL2_gfx]
+
+## Quick Start
 
 ```console
 $ make
 $ ./gp
 ```
 
-## Shortcuts
+## Controls
 
-## Keyboard
+### Keyboard
 
 | Key              | Action                         |
 |------------------|--------------------------------|
 | <kbd>r</kbd>     | Generate new state of the game |
 | <kbd>SPACE</kbd> | Step the state of the game     |
 
-## Mouse
+### Mouse
 
 - Clicking on agents (red triangles) dumps their state to stdout
 
