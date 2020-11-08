@@ -2,7 +2,7 @@
 
 Just a Playground Repo for my Genetic Programming experiments. I have no priori exprience with Genetic Programming and Algorithms.
 
-![screenshot](./assets/screenshot.png)
+![demo](./assets/demo.png)
 
 ## Idea
 
