@@ -50,5 +50,9 @@ $ ./gp
 
 - Clicking on agents (red triangles) dumps their state to stdout
 
+## References
+
+- https://en.wikipedia.org/wiki/Genetic_algorithm
+
 [SDL2]: https://www.libsdl.org/
 [SDL2_gfx]: https://github.com/ferzkopp/SDL_gfx
