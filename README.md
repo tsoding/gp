@@ -5,7 +5,7 @@ Just a Playground Repo for my Genetic Programming experiments. I have no priori 
 ## Idea
 
 - Write a simple game where agents are trying to survive in an environment fighting for food and with each other.
-- The behaviour of a single agent is described with a Turing machine style state machine.
+- The behaviour of a single agent is described with a Turing machine style state machine that we call Chromosomes.
 - Use Genetic Algorithms to find an optimial behaviour that survives the longest.
 
 ### Environment
@@ -20,7 +20,19 @@ TBD
 
 ### Agents
 
-<!-- TODO: Document agents -->
+#### State
+
+<!-- TODO: Document agents state -->
+TBD
+
+#### Action
+
+<!-- TODO: Document available agents actions -->
+TBD
+
+#### Chromosomes
+
+<!-- TODO: Document agents chromosomes -->
 TBD
 
 ## Dependencies
