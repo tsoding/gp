@@ -55,10 +55,11 @@ $ ./gp
 
 ### Keyboard
 
-| Key              | Action                         |
-|------------------|--------------------------------|
-| <kbd>r</kbd>     | Generate new state of the game |
-| <kbd>SPACE</kbd> | Step the state of the game     |
+| Key              | Action                                                    |
+|------------------|-----------------------------------------------------------|
+| <kbd>r</kbd>     | Generate completely new state of the game                 |
+| <kbd>n</kbd>     | Make a new generation based on the best performing agents |
+| <kbd>SPACE</kbd> | Step the state of the game                                |
 
 ### Mouse
 

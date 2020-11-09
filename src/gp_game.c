@@ -115,6 +115,8 @@ Action random_action(void)
 
 void init_game(Game *game)
 {
+    memset(game, 0, sizeof(*game));
+
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
         game->agents[i].pos = random_empty_coord_on_board(game);
         game->agents[i].dir = random_dir();
@@ -340,5 +342,61 @@ void print_best_agents(FILE *stream, Game *game, size_t n)
 
     for (size_t i = 0; i < n; ++i) {
         print_agent(stream, &game->agents[i]);
+    }
+}
+
+void mate_agents(const Agent *parent1, const Agent *parent2, Agent *child)
+{
+    const size_t length = JEANS_COUNT / 2;
+    memcpy(child->chromo.jeans,
+           parent1->chromo.jeans,
+           length);
+    memcpy(child->chromo.jeans + length,
+           parent2->chromo.jeans + length,
+           length);
+}
+
+void mutate_agent(Agent *agent)
+{
+    for (size_t i = 0; i < JEANS_COUNT; ++i) {
+        if (random_int_range(0, MUTATION_CHANCE) == 0) {
+            agent->chromo.jeans[i].state = random_int_range(0, STATES_COUNT);
+            agent->chromo.jeans[i].env = random_env();
+            agent->chromo.jeans[i].action = random_action();
+            agent->chromo.jeans[i].next_state = random_int_range(0, STATES_COUNT);
+        }
+    }
+}
+
+void make_next_generation(Game *prev_game, Game *next_game)
+{
+    memset(next_game, 0, sizeof(*next_game));
+
+    qsort(prev_game->agents, AGENTS_COUNT, sizeof(Agent),
+          compare_agents_lifetimes);
+
+    for (size_t i = 0; i < FOODS_COUNT; ++i) {
+        next_game->foods[i].pos = prev_game->foods[i].pos;
+    }
+
+    for (size_t i = 0; i < WALLS_COUNT; ++i) {
+        next_game->walls[i].pos = prev_game->walls[i].pos;
+    }
+
+    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
+        size_t p1 = random_int_range(0, SELECTION_POOL);
+        size_t p2 = random_int_range(0, SELECTION_POOL);
+
+        mate_agents(&prev_game->agents[p1],
+                    &prev_game->agents[p2],
+                    &next_game->agents[i]);
+        mutate_agent(&next_game->agents[i]);
+
+        next_game->agents[i].pos = random_empty_coord_on_board(next_game);
+        next_game->agents[i].dir = random_dir();
+        next_game->agents[i].hunger = HUNGER_MAX;
+        next_game->agents[i].health = HEALTH_MAX;
+        next_game->agents[i].dir = i % 4;
+        next_game->agents[i].lifetime = 0;
     }
 }
