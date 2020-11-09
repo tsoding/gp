@@ -279,8 +279,12 @@ void execute_action(Game *game, size_t agent_index, Action action)
             }
             step_agent(&game->agents[agent_index]);
         } else if (other_agent != NULL) {
-            // TODO: make agents drop the food when they die
             other_agent->health -= ATTACK_DAMAGE;
+
+            if (other_agent->health <= 0) {
+                game->agents[agent_index].hunger += FOOD_HUNGER_RECOVERY;
+                step_agent(&game->agents[agent_index]);
+            }
         } else if (wall == NULL) {
             step_agent(&game->agents[agent_index]);
         }
