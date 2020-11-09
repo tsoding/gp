@@ -374,10 +374,10 @@ void mate_agents(const Agent *parent1, const Agent *parent2, Agent *child)
     const size_t length = JEANS_COUNT / 2;
     memcpy(child->chromo.jeans,
            parent1->chromo.jeans,
-           length);
+           length * sizeof(Gene));
     memcpy(child->chromo.jeans + length,
            parent2->chromo.jeans + length,
-           length);
+           length * sizeof(Gene));
 }
 
 void mutate_agent(Agent *agent)
