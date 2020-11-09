@@ -142,6 +142,44 @@ void init_game(Game *game)
     }
 }
 
+void dump_game(const char *filepath, const Game *game)
+{
+    FILE *stream = fopen(filepath, "wb");
+    if (stream == NULL) {
+        fprintf(stderr, "Could not open file `%s`\n", filepath);
+        exit(1);
+    }
+
+    fwrite(game, sizeof(*game), 1, stream);
+
+    if (ferror(stream)) {
+        fprintf(stderr, "Could not dump to file `%s`\n", filepath);
+        exit(1);
+    }
+
+    fclose(stream);
+}
+
+void load_game(const char *filepath, Game *game)
+{
+    FILE *stream = fopen(filepath, "rb");
+
+    if (stream == NULL) {
+        fprintf(stderr, "Could not open file `%s`\n", filepath);
+        exit(1);
+    }
+
+    size_t n = fread(game, sizeof(*game), 1, stream);
+    assert(n == 1);
+
+    if (ferror(stream)) {
+        fprintf(stderr, "Could not load from file `%s`\n", filepath);
+        exit(1);
+    }
+
+    fclose(stream);
+}
+
 int mod_int(int a, int b)
 {
     return (a % b + b) % b;
@@ -399,4 +437,15 @@ void make_next_generation(Game *prev_game, Game *next_game)
         next_game->agents[i].dir = i % 4;
         next_game->agents[i].lifetime = 0;
     }
+}
+
+int is_everyone_dead(const Game *game)
+{
+    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
+        if (game->agents[i].health > 0) {
+            return 0;
+        }
+    }
+
+    return 1;
 }

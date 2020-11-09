@@ -125,6 +125,11 @@ Env env_infront_of_agent(Game *game, size_t agent_index);
 
 void init_game(Game *game);
 
+void dump_game(const char *filepath, const Game *game);
+void load_game(const char *filepath, Game *game);
+
+int is_everyone_dead(const Game *game);
+
 void step_agent(Agent *agent);
 void execute_action(Game *game, size_t agent_index, Action action);
 void step_game(Game *game);

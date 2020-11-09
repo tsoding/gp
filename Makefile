@@ -1,7 +1,12 @@
 PKGS=sdl2 SDL2_gfx
 CFLAGS=-Wall -Wold-style-definition -ggdb -std=c11 -pedantic `pkg-config --cflags $(PKGS)`
 LIBS=`pkg-config --libs $(PKGS)` -lm
+COMMON_SRC=src/gp_game.h src/gp_game.c src/gp_visual.h src/gp_visual.c
 
-gp: $(wildcard src/*)
-	$(CC) $(CFLAGS) -o gp src/gp.c $(LIBS)
+all: gp_trainer gp_simulator
 
+gp_trainer: src/gp_trainer.c $(COMMON_SRC)
+	$(CC) $(CFLAGS) -o gp_trainer src/gp_trainer.c $(LIBS)
+
+gp_simulator: src/gp_simulator.c $(COMMON_SRC)
+	$(CC) $(CFLAGS) -o gp_simulator src/gp_simulator.c $(LIBS)

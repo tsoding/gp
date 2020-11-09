@@ -48,12 +48,20 @@ Should be available on Windows, MacOS, and the majority of Linux distros.
 
 ```console
 $ make
-$ ./gp
+$ ./gp_trainer 69 ./output.bin
+$ ./gp_simulator ./output.bin
 ```
 
-## Controls
+## gp_trainer
 
-### Keyboard
+TBD
+<!-- TODO: gp_trainer is not documented yet -->
+
+## gp_simulator
+
+### Controls
+
+#### Keyboard
 
 | Key              | Action                                                    |
 |------------------|-----------------------------------------------------------|
@@ -61,7 +69,7 @@ $ ./gp
 | <kbd>n</kbd>     | Make a new generation based on the best performing agents |
 | <kbd>SPACE</kbd> | Step the state of the game                                |
 
-### Mouse
+#### Mouse
 
 - Clicking on agents (red triangles) dumps their state to stdout
 
