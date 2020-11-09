@@ -1,4 +1,5 @@
 gp
 gp_trainer
 gp_simulator
+gp_inspector
 *.bin
