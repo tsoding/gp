@@ -124,10 +124,10 @@ void init_game(Game *game)
         game->agents[i].lifetime = 0;
 
         for (size_t j = 0; j < JEANS_COUNT; ++j) {
-            game->chromos[i].jeans[j].state = random_int_range(0, STATES_COUNT);
-            game->chromos[i].jeans[j].env = random_env();
-            game->chromos[i].jeans[j].action = random_action();
-            game->chromos[i].jeans[j].next_state = random_int_range(0, STATES_COUNT);
+            game->agents[i].chromo.jeans[j].state = random_int_range(0, STATES_COUNT);
+            game->agents[i].chromo.jeans[j].env = random_env();
+            game->agents[i].chromo.jeans[j].action = random_action();
+            game->agents[i].chromo.jeans[j].next_state = random_int_range(0, STATES_COUNT);
         }
     }
 
@@ -266,7 +266,7 @@ void step_game(Game *game)
         if (game->agents[i].health > 0) {
             // Interpret genes
             for (size_t j = 0; j < JEANS_COUNT; ++j) {
-                Gene gene = game->chromos[i].jeans[j];
+                Gene gene = game->agents[i].chromo.jeans[j];
                 if (gene.state == game->agents[i].state && gene.env == env_of_agent(game, i)) {
                     execute_action(game, i, gene.action);
                     game->agents[i].state = gene.next_state;
@@ -296,7 +296,7 @@ Agent *agent_at(Game *game, Coord pos)
     return NULL;
 }
 
-void print_agent(FILE *stream, Agent *agent)
+void print_agent(FILE *stream, const Agent *agent)
 {
     printf("Agent {\n");
     printf("  .pos = (%d, %d)\n", agent->pos.x, agent->pos.y);
@@ -304,6 +304,9 @@ void print_agent(FILE *stream, Agent *agent)
     printf("  .hunger = %d\n", agent->hunger);
     printf("  .health = %d\n", agent->health);
     printf("  .state = %d\n", agent->state);
+    printf("  .lifetime = %d\n", agent->lifetime);
+    printf("  .chromo = \n");
+    print_chromo(stream, &agent->chromo);
     printf("}\n");
 }
 
@@ -317,4 +320,25 @@ const char *dir_as_cstr(Dir dir)
     case DIR_COUNT: {}
     }
     assert(0 && "Unreachable");
+}
+
+int compare_agents_lifetimes(const void *a, const void *b)
+{
+    const Agent *agent_a = a;
+    const Agent *agent_b = b;
+    return agent_b->lifetime - agent_a->lifetime;
+}
+
+void print_best_agents(FILE *stream, Game *game, size_t n)
+{
+    qsort(game->agents, AGENTS_COUNT, sizeof(Agent),
+          compare_agents_lifetimes);
+
+    if (n > AGENTS_COUNT) {
+        n = AGENTS_COUNT;
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        print_agent(stream, &game->agents[i]);
+    }
 }

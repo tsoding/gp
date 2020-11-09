@@ -74,9 +74,10 @@ typedef struct {
     int health;
     State state;
     int lifetime;
+    Chromo chromo;
 } Agent;
 
-void print_agent(FILE *stream, Agent *agent);
+void print_agent(FILE *stream, const Agent *agent);
 
 typedef struct {
     int eaten;
@@ -89,7 +90,6 @@ typedef struct {
 
 typedef struct {
     Agent agents[AGENTS_COUNT];
-    Chromo chromos[AGENTS_COUNT];
     Food foods[FOODS_COUNT];
     Wall walls[WALLS_COUNT];
 } Game;
@@ -120,5 +120,7 @@ void init_game(Game *game);
 void step_agent(Agent *agent);
 void execute_action(Game *game, size_t agent_index, Action action);
 void step_game(Game *game);
+
+void print_best_agents(FILE *stream, Game *game, size_t n);
 
 #endif  // GP_GAME_H_

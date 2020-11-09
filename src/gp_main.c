@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
                 } break;
 
                 case SDLK_n: {
+                    print_best_agents(stdout, &game, 5);
                     // TODO: introduce action that manually generates a new generation
                     //   - Take the agents that survived longest
                     //   - Crossover their jeans
