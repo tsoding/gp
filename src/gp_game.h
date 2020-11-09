@@ -7,13 +7,24 @@
 #define AGENTS_COUNT 2000
 #define FOODS_COUNT 1000
 #define WALLS_COUNT 60
-#define JEANS_COUNT 10
+#define JEANS_COUNT 20
 #define FOOD_HUNGER_RECOVERY 10
 #define STEP_HUNGER_DAMAGE 5
 #define HUNGER_MAX 100
 #define HEALTH_MAX 100
 #define ATTACK_DAMAGE 10
-#define STATES_COUNT 5
+#define STATES_COUNT 7
+#define MUTATION_CHANCE 100
+#define SELECTION_POOL 10
+
+static_assert(
+    AGENTS_COUNT + FOODS_COUNT + WALLS_COUNT <= BOARD_WIDTH * BOARD_HEIGHT,
+    "Too many entities. Can't fit all of them on the board");
+
+static_assert(
+    JEANS_COUNT % 2 == 0,
+    "Amount of jeans in the chormosome must be an even number for the mating "
+    "process to happen properly.");
 
 typedef struct {
     int x, y;
@@ -74,9 +85,10 @@ typedef struct {
     int health;
     State state;
     int lifetime;
+    Chromo chromo;
 } Agent;
 
-void print_agent(FILE *stream, Agent *agent);
+void print_agent(FILE *stream, const Agent *agent);
 
 typedef struct {
     int eaten;
@@ -89,13 +101,9 @@ typedef struct {
 
 typedef struct {
     Agent agents[AGENTS_COUNT];
-    Chromo chromos[AGENTS_COUNT];
     Food foods[FOODS_COUNT];
     Wall walls[WALLS_COUNT];
 } Game;
-
-static_assert(AGENTS_COUNT + FOODS_COUNT + WALLS_COUNT <= BOARD_WIDTH * BOARD_HEIGHT,
-              "Too many entities. Can't fit all of them on the board");
 
 int random_int_range(int low, int high);
 Dir random_dir(void);
@@ -120,5 +128,13 @@ void init_game(Game *game);
 void step_agent(Agent *agent);
 void execute_action(Game *game, size_t agent_index, Action action);
 void step_game(Game *game);
+
+void print_best_agents(FILE *stream, Game *game, size_t n);
+
+void mate_agents(const Agent *parent1, const Agent *parent2, Agent *child);
+void mutate_agent(Agent *agent);
+
+// TODO: more different mating strategies for next generations
+void make_next_generation(Game *prev_game, Game *next_game);
 
 #endif  // GP_GAME_H_
