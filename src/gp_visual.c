@@ -29,16 +29,16 @@ void render_agent(SDL_Renderer *renderer, Agent agent)
     float x3 = agents_dirs[agent.dir][4] * (CELL_WIDTH  - AGENT_PADDING * 2) + agent.pos.x * CELL_WIDTH  + AGENT_PADDING;
     float y3 = agents_dirs[agent.dir][5] * (CELL_HEIGHT - AGENT_PADDING * 2) + agent.pos.y * CELL_HEIGHT + AGENT_PADDING;
 
-    Uint32 color = agent.health <= 0 ? AGENT_DEAD_COLOR : AGENT_ALIVE_COLOR;
-
-    filledTrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, HEX_COLOR(color));
-    aatrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, HEX_COLOR(color));
+    filledTrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, HEX_COLOR(AGENT_COLOR));
+    aatrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, HEX_COLOR(AGENT_COLOR));
 }
 
 void render_game(SDL_Renderer *renderer, const Game *game)
 {
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        render_agent(renderer, game->agents[i]);
+        if (game->agents[i].health > 0) {
+            render_agent(renderer, game->agents[i]);
+        }
     }
 
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
