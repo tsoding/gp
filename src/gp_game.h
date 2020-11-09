@@ -15,11 +15,6 @@
 #define ATTACK_DAMAGE 10
 #define STATES_COUNT 5
 
-// TODO: we need to simplify the rules of the game
-//  - Remove attack action. Make moving towards agents an attack.
-//  - Remove eat action. Make moving towards food an eat.
-//  - ...
-
 typedef struct {
     int x, y;
 } Coord;
@@ -51,8 +46,6 @@ const char *env_as_cstr(Env env);
 typedef enum {
     ACTION_NOP = 0,
     ACTION_STEP,
-    ACTION_EAT,
-    ACTION_ATTACK,
     ACTION_TURN_LEFT,
     ACTION_TURN_RIGHT,
     ACTION_COUNT,

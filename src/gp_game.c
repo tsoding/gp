@@ -35,8 +35,6 @@ const char *action_as_cstr(Action action)
     switch (action) {
     case ACTION_NOP:        return "ACTION_NOP";
     case ACTION_STEP:       return "ACTION_STEP";
-    case ACTION_EAT:        return "ACTION_EAT";
-    case ACTION_ATTACK:     return "ACTION_ATTACK";
     case ACTION_TURN_LEFT:  return "ACTION_TURN_LEFT";
     case ACTION_TURN_RIGHT: return "ACTION_TURN_RIGHT";
     case ACTION_COUNT:      {}
@@ -228,28 +226,23 @@ void execute_action(Game *game, size_t agent_index, Action action)
     case ACTION_NOP:
         break;
 
-    case ACTION_STEP:
-        if (env_of_agent(game, agent_index) != ENV_WALL) {
-            step_agent(&game->agents[agent_index]);
-        }
-        break;
-
-    case ACTION_EAT: {
+    case ACTION_STEP: {
         Food *food = food_infront_of_agent(game, agent_index);
+        Agent *other_agent = agent_infront_of_agent(game, agent_index);
+        Wall *wall = wall_infront_of_agent(game, agent_index);
+
         if (food != NULL) {
             food->eaten = 1;
             game->agents[agent_index].hunger += FOOD_HUNGER_RECOVERY;
             if (game->agents[agent_index].hunger > HUNGER_MAX) {
                 game->agents[agent_index].hunger = HUNGER_MAX;
             }
-        }
-    } break;
-
-    case ACTION_ATTACK: {
-        // TODO: make agents drop the food when they die
-        Agent *other_agent = agent_infront_of_agent(game, agent_index);
-        if (other_agent != NULL) {
+            step_agent(&game->agents[agent_index]);
+        } else if (other_agent != NULL) {
+            // TODO: make agents drop the food when they die
             other_agent->health -= ATTACK_DAMAGE;
+        } else if (wall == NULL) {
+            step_agent(&game->agents[agent_index]);
         }
     } break;
 
