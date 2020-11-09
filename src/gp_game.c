@@ -369,20 +369,6 @@ int compare_agents_lifetimes(const void *a, const void *b)
     return agent_b->lifetime - agent_a->lifetime;
 }
 
-void print_best_agents(FILE *stream, Game *game, size_t n)
-{
-    qsort(game->agents, AGENTS_COUNT, sizeof(Agent),
-          compare_agents_lifetimes);
-
-    if (n > AGENTS_COUNT) {
-        n = AGENTS_COUNT;
-    }
-
-    for (size_t i = 0; i < n; ++i) {
-        print_agent(stream, &game->agents[i]);
-    }
-}
-
 void mate_agents(const Agent *parent1, const Agent *parent2, Agent *child)
 {
     const size_t length = JEANS_COUNT / 2;

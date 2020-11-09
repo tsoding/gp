@@ -134,8 +134,6 @@ void step_agent(Agent *agent);
 void execute_action(Game *game, size_t agent_index, Action action);
 void step_game(Game *game);
 
-void print_best_agents(FILE *stream, Game *game, size_t n);
-
 void mate_agents(const Agent *parent1, const Agent *parent2, Agent *child);
 void mutate_agent(Agent *agent);
 
