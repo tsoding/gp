@@ -31,6 +31,9 @@ int main(int argc, char *argv[])
 {
     shift(&argc, &argv);        // skip program name
 
+    // TODO: handle Ctrl+C
+    // TODO: contrinue trying from the provided dump file
+
     if (argc == 0) {
         usage(stderr);
         fprintf(stderr, "ERROR: number of generations is not provided\n");
