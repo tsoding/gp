@@ -31,8 +31,10 @@ int main(int argc, char *argv[])
 {
     shift(&argc, &argv);        // skip program name
 
-    // TODO: handle Ctrl+C
-    // TODO: contrinue trying from the provided dump file
+    // TODO(#4): pause/resume mechanisms for gp_trainer
+    // - Stop and dump current state by ^C
+    // - Continue training from a provided dumped state
+    // - Maybe log each generations during the training
 
     if (argc == 0) {
         usage(stderr);
