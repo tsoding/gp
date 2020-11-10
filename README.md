@@ -10,7 +10,7 @@ Just a Playground Repo for my Genetic Programming experiments. I have no prior e
 - The behaviour of a single agent is described with a Turing machine style state machine that we call Chromosomes.
 - Use Genetic Algorithms to find an optimial behaviour that survives the longest.
 
-<!-- TODO: Rules and mechanics of the game is not documented -->
+<!-- TODO(#3): Rules and mechanics of the game is not documented -->
 
 ### Environment
 
