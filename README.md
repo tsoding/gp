@@ -51,8 +51,7 @@ $ ./gp_simulator ./output.bin
 
 ## gp_trainer
 
-TBD
-<!-- TODO: gp_trainer is not documented yet -->
+Lets you select agents over several generations in a batch mode. The results can be simulated and inspected by [gp_simulator](#gp_simulator) and [gp_inspector](#gp_inspector).
 
 ## gp_simulator
 
@@ -74,7 +73,7 @@ Lets you interactively step through the simulation of the generation produced by
 
 ## gp_inspector
 
-Lets you inspect generations produced by [gp_trainer](#gp_trainer)
+Lets you inspect generations produced by [gp_trainer](#gp_trainer).
 
 ## References
 
