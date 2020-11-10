@@ -10,31 +10,28 @@ Just a Playground Repo for my Genetic Programming experiments. I have no prior e
 - The behaviour of a single agent is described with a Turing machine style state machine that we call Chromosomes.
 - Use Genetic Algorithms to find an optimial behaviour that survives the longest.
 
+<!-- TODO: Rules and mechanics of the game is not documented -->
+
 ### Environment
 
-<!-- TODO: Document environment -->
 *TBD*
 
 ### Entities
 
-<!-- TODO: Document entities -->
 *TBD*
 
 ### Agents
 
 #### State
 
-<!-- TODO: Document agents state -->
 *TBD*
 
 #### Action
 
-<!-- TODO: Document available agents actions -->
 *TBD*
 
 #### Chromosomes
 
-<!-- TODO: Document agents chromosomes -->
 *TBD*
 
 ## Dependencies
@@ -59,6 +56,8 @@ TBD
 
 ## gp_simulator
 
+Lets you interactively step through the simulation of the generation produced by [gp_trainer](#gp_trainer).
+
 ### Controls
 
 #### Keyboard
@@ -72,6 +71,10 @@ TBD
 #### Mouse
 
 - Clicking on agents (red triangles) dumps their state to stdout
+
+## gp_inspector
+
+Lets you inspect generations produced by [gp_trainer](#gp_trainer)
 
 ## References
 
