@@ -8,6 +8,7 @@
 
 #include "./gp_game.c"
 #include "./gp_visual.c"
+#include "./gp_logging.c"
 
 #define MAX_GENERATIONS 10
 
@@ -50,6 +51,9 @@ int main(int argc, char *argv[])
     }
     const char *output_filepath = shift(&argc, &argv);
 
+    FILE* log = fopen("log.dat", "w");
+    log_header(log);
+
     int current = 0;
     init_game(&games[current]);
     for (int i = 0; i < generations_count; ++i) {
@@ -63,10 +67,17 @@ int main(int argc, char *argv[])
         printf("%fs\n", (float)(clock() - begin) / (float) CLOCKS_PER_SEC);
         fflush(stdout);
 
+        log_generation(log, i, &games[current]);
+        /* we need to fflush the log file in order to use the live update */
+        fflush(log);
+
         int next = 1 - current;
         make_next_generation(&games[current], &games[next]);
         current = next;
     }
+
+    log_close_pipe();
+    fclose(log);
 
     dump_game(output_filepath, &games[current]);
 
