@@ -113,6 +113,22 @@ Action random_action(void)
     return random_int_range(0, ACTION_COUNT);
 }
 
+void generate_jeans(Chromo* chromos)
+{
+    // there should be a gene for every combination of state and environment
+    for(size_t state = 0; state < STATES_COUNT; state++)
+    {
+        for(size_t env = 0; env < ENV_COUNT; env++)
+        {
+            Gene* gene = &chromos->jeans[state * ENV_COUNT + env];
+            gene->state = state;
+            gene->env = env;
+            gene->action = random_action();
+            gene->next_state = random_int_range(0, STATES_COUNT);
+        }
+    }
+}
+
 void init_game(Game *game)
 {
     memset(game, 0, sizeof(*game));
@@ -125,12 +141,7 @@ void init_game(Game *game)
         game->agents[i].dir = i % 4;
         game->agents[i].lifetime = 0;
 
-        for (size_t j = 0; j < JEANS_COUNT; ++j) {
-            game->agents[i].chromo.jeans[j].state = random_int_range(0, STATES_COUNT);
-            game->agents[i].chromo.jeans[j].env = random_env();
-            game->agents[i].chromo.jeans[j].action = random_action();
-            game->agents[i].chromo.jeans[j].next_state = random_int_range(0, STATES_COUNT);
-        }
+        generate_jeans(&game->agents[i].chromo);
     }
 
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
@@ -375,24 +386,25 @@ int compare_agents_lifetimes(const void *a, const void *b)
 
 void mate_agents(const Agent *parent1, const Agent *parent2, Agent *child)
 {
-    const size_t length = JEANS_COUNT / 2;
-    memcpy(child->chromo.jeans,
-           parent1->chromo.jeans,
-           length * sizeof(Gene));
-    memcpy(child->chromo.jeans + length,
-           parent2->chromo.jeans + length,
-           length * sizeof(Gene));
+    // as long as we copy all the jeans in order, the invariant of
+    // state+env combinations should not be violated.
+    const Agent* parents[2] = { parent1, parent2 };
+    for(size_t i = 0; i < JEANS_COUNT; i++)
+        child->chromo.jeans[i] = parents[rand() % 2]->chromo.jeans[i];
 }
 
 void mutate_agent(Agent *agent)
 {
-    for (size_t i = 0; i < JEANS_COUNT; ++i) {
-        if (random_int_range(0, MUTATION_CHANCE) == 0) {
-            agent->chromo.jeans[i].state = random_int_range(0, STATES_COUNT);
-            agent->chromo.jeans[i].env = random_env();
+    // instead of completely mangling the genes, just change some characteristics.
+    // since the condition is that we ensure every combination of state and env has a gene,
+    // the only thing we can mutate is the action and the next state.
+    for(size_t i = 0; i < agent->chromo.count; i++)
+    {
+        if(random_int_range(0, MUTATION_CHANCE) == 0)
             agent->chromo.jeans[i].action = random_action();
+
+        if(random_int_range(0, MUTATION_CHANCE) == 0)
             agent->chromo.jeans[i].next_state = random_int_range(0, STATES_COUNT);
-        }
     }
 }
 

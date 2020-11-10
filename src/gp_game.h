@@ -4,27 +4,20 @@
 #define BOARD_WIDTH 100
 #define BOARD_HEIGHT 100
 
-#define AGENTS_COUNT 2000
-#define FOODS_COUNT 1000
+#define AGENTS_COUNT 200
+#define FOODS_COUNT 2000
 #define WALLS_COUNT 60
-#define JEANS_COUNT 20
 #define FOOD_HUNGER_RECOVERY 10
-#define STEP_HUNGER_DAMAGE 5
+#define STEP_HUNGER_DAMAGE 2
 #define HUNGER_MAX 100
 #define HEALTH_MAX 100
 #define ATTACK_DAMAGE 10
-#define STATES_COUNT 7
 #define MUTATION_CHANCE 100
 #define SELECTION_POOL 50
 
 static_assert(
     AGENTS_COUNT + FOODS_COUNT + WALLS_COUNT <= BOARD_WIDTH * BOARD_HEIGHT,
     "Too many entities. Can't fit all of them on the board");
-
-static_assert(
-    JEANS_COUNT % 2 == 0,
-    "Amount of jeans in the chormosome must be an even number for the mating "
-    "process to happen properly.");
 
 typedef struct {
     int x, y;
@@ -59,8 +52,19 @@ typedef enum {
     ACTION_STEP,
     ACTION_TURN_LEFT,
     ACTION_TURN_RIGHT,
+    ACTION_RANDOM,
     ACTION_COUNT,
 } Action;
+
+
+#define STATES_COUNT 7
+#define JEANS_COUNT (STATES_COUNT * ENV_COUNT)
+
+static_assert(
+    JEANS_COUNT % 2 == 0,
+    "Amount of jeans in the chromosome must be an even number for the mating "
+    "process to happen properly.");
+
 
 const char *action_as_cstr(Action action);
 
