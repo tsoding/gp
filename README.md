@@ -80,6 +80,8 @@ Lets you inspect generations produced by [gp_trainer](#gp_trainer).
 ## References
 
 - https://en.wikipedia.org/wiki/Genetic_algorithm
+- https://en.wikipedia.org/wiki/Turing_machine
+- https://github.com/tsoding/turd
 
 [SDL2]: https://www.libsdl.org/
 [SDL2_gfx]: https://github.com/ferzkopp/SDL_gfx
