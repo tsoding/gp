@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
         log_generation(log, i, &games[current]);
         /* we need to fflush the log file in order to use the live update */
         fflush(log);
+        log_live_update();
 
         int next = 1 - current;
         make_next_generation(&games[current], &games[next]);

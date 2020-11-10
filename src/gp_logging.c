@@ -67,6 +67,10 @@ void log_generation(FILE *stream, int gen, Game *game)
   fprintf(stream, "%d, %f, %d, %d, %d\n", gen, avg_lf, min_lifetime,
           max_lifetime, food_eaten);
 
+}
+
+void log_live_update(void)
+{
   for (size_t i = 0; i < nOfGnuplotCmds; ++i) {
     fprintf(fp, "%s \n", gnuplotCmds[i]);
   }
@@ -75,5 +79,5 @@ void log_generation(FILE *stream, int gen, Game *game)
 
 void log_close_pipe(void)
 {
-  fclose(fp);
+  pclose(fp);
 }
