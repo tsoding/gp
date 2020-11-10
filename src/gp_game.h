@@ -137,7 +137,7 @@ void step_game(Game *game);
 void mate_agents(const Agent *parent1, const Agent *parent2, Agent *child);
 void mutate_agent(Agent *agent);
 
-// TODO: more different mating strategies for next generations
+// TODO(#5): more mating strategies for next generations
 void make_next_generation(Game *prev_game, Game *next_game);
 
 #endif  // GP_GAME_H_
