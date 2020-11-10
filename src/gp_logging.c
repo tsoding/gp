@@ -12,12 +12,12 @@ char* gnuplotCmds[] = {
 "set multiplot layout 2, 2 columnsfirst title 'gp live stats'\n",
 "set ylabel 'Avg Lifetime'\n",
 "plot 'log.dat' using 1:2 with lines lw 2 lt 10 notitle \n",
-"set ylabel 'Max lifetime'\n",
-"plot 'log.dat' using 1:4 with lines lw 2 lt 10notitle\n",
 "set ylabel 'Min lifetime'\n",
-"plot 'log.dat' using 1:3 with lines lw 2 lt 10notitle\n",
+"plot 'log.dat' using 1:3 with lines lw 2 lt 10 notitle\n",
+"set ylabel 'Max lifetime'\n",
+"plot 'log.dat' using 1:4 with lines lw 2 lt 10 notitle\n",
 "set ylabel 'Food Eaten'\n",
-"plot 'log.dat' using 1:5 with lines lw 2 lt 10notitle\n",
+"plot 'log.dat' using 1:5 with lines lw 2 lt 10 notitle\n",
 "unset multiplot\n"
 };
 
