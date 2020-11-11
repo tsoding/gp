@@ -52,7 +52,6 @@ typedef enum {
     ACTION_STEP,
     ACTION_TURN_LEFT,
     ACTION_TURN_RIGHT,
-    ACTION_RANDOM,
     ACTION_COUNT,
 } Action;
 
