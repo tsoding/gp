@@ -16,6 +16,9 @@
 #define STATES_COUNT 7
 #define MUTATION_CHANCE 100
 #define SELECTION_POOL 50
+static_assert(
+    SELECTION_POOL <= AGENTS_COUNT,
+    "Selection pool is bigger than amount of agents we have.");
 
 static_assert(
     AGENTS_COUNT + FOODS_COUNT + WALLS_COUNT <= BOARD_WIDTH * BOARD_HEIGHT,
@@ -91,18 +94,9 @@ typedef struct {
 void print_agent(FILE *stream, const Agent *agent);
 
 typedef struct {
-    int eaten;
-    Coord pos;
-} Food;
-
-typedef struct {
-    Coord pos;
-} Wall;
-
-typedef struct {
     Agent agents[AGENTS_COUNT];
-    Food foods[FOODS_COUNT];
-    Wall walls[WALLS_COUNT];
+    int foods[BOARD_HEIGHT][BOARD_WIDTH];
+    int walls[BOARD_HEIGHT][BOARD_WIDTH];
 } Game;
 
 int random_int_range(int low, int high);
@@ -118,9 +112,10 @@ int is_cell_empty(const Game *game, Coord pos);
 Agent *agent_at(Game *game, Coord coord);
 
 Coord coord_infront_of_agent(const Agent *agent);
-Food *food_infront_of_agent(Game *game, size_t agent_index);
+int *food_infront_of_agent(Game *game, size_t agent_index);
+// TODO: implement O(1) lookup for agents
 Agent *agent_infront_of_agent(Game *game, size_t agent_index);
-Wall *wall_infront_of_agent(Game *game, size_t agent_index);
+int *wall_infront_of_agent(Game *game, size_t agent_index);
 Env env_infront_of_agent(Game *game, size_t agent_index);
 
 void init_game(Game *game);

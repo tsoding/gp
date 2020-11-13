@@ -79,16 +79,12 @@ int is_cell_empty(const Game *game, Coord pos)
         }
     }
 
-    for (size_t i = 0; i < FOODS_COUNT; ++i) {
-        if (coord_equals(game->foods[i].pos, pos)) {
-            return 0;
-        }
+    if (game->foods[pos.y][pos.x]) {
+        return 0;
     }
 
-    for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        if (coord_equals(game->walls[i].pos, pos)) {
-            return 0;
-        }
+    if (game->walls[pos.y][pos.x]) {
+        return 0;
     }
 
     return 1;
@@ -134,11 +130,13 @@ void init_game(Game *game)
     }
 
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
-        game->foods[i].pos = random_empty_coord_on_board(game);
+        Coord pos = random_empty_coord_on_board(game);
+        game->foods[pos.y][pos.x] = 1;
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        game->walls[i].pos = random_empty_coord_on_board(game);
+        Coord pos = random_empty_coord_on_board(game);
+        game->walls[pos.y][pos.x] = 1;
     }
 }
 
@@ -217,27 +215,23 @@ Agent *agent_infront_of_agent(Game *game, size_t agent_index)
     return NULL;
 }
 
-Wall *wall_infront_of_agent(Game *game, size_t agent_index)
+int *wall_infront_of_agent(Game *game, size_t agent_index)
 {
     Coord infront = coord_infront_of_agent(&game->agents[agent_index]);
 
-    for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        if (coord_equals(infront, game->walls[i].pos)) {
-            return &game->walls[i];
-        }
+    if (game->walls[infront.y][infront.x]) {
+        return &game->walls[infront.y][infront.x];
     }
 
     return NULL;
 }
 
-Food *food_infront_of_agent(Game *game, size_t agent_index)
+int *food_infront_of_agent(Game *game, size_t agent_index)
 {
     Coord infront = coord_infront_of_agent(&game->agents[agent_index]);
 
-    for (size_t i = 0; i < FOODS_COUNT; ++i) {
-        if (!game->foods[i].eaten && coord_equals(infront, game->foods[i].pos)) {
-            return &game->foods[i];
-        }
+    if (game->foods[infront.y][infront.x]) {
+        return &game->foods[infront.y][infront.x];
     }
 
     return NULL;
@@ -267,12 +261,12 @@ void execute_action(Game *game, size_t agent_index, Action action)
         break;
 
     case ACTION_STEP: {
-        Food *food = food_infront_of_agent(game, agent_index);
+        int *food = food_infront_of_agent(game, agent_index);
         Agent *other_agent = agent_infront_of_agent(game, agent_index);
-        Wall *wall = wall_infront_of_agent(game, agent_index);
+        int *wall = wall_infront_of_agent(game, agent_index);
 
         if (food != NULL) {
-            food->eaten = 1;
+            *food = 0;
             game->agents[agent_index].hunger += FOOD_HUNGER_RECOVERY;
             if (game->agents[agent_index].hunger > HUNGER_MAX) {
                 game->agents[agent_index].hunger = HUNGER_MAX;
@@ -404,11 +398,13 @@ void make_next_generation(Game *prev_game, Game *next_game)
           compare_agents_lifetimes);
 
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
-        next_game->foods[i].pos = prev_game->foods[i].pos;
+        Coord pos = random_empty_coord_on_board(next_game);
+        next_game->foods[pos.y][pos.x] = 1;
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        next_game->walls[i].pos = prev_game->walls[i].pos;
+        Coord pos = random_empty_coord_on_board(next_game);
+        next_game->walls[pos.y][pos.x] = 1;
     }
 
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
