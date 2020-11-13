@@ -132,7 +132,6 @@ void init_game(Game *game)
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
         Coord pos = random_empty_coord_on_board(game);
         game->foods[pos.y][pos.x] = 1;
-        game->foods_origin[i] = pos;
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
@@ -398,13 +397,15 @@ void make_next_generation(Game *prev_game, Game *next_game)
     qsort(prev_game->agents, AGENTS_COUNT, sizeof(Agent),
           compare_agents_lifetimes);
 
-    memcpy(next_game->foods_origin, prev_game->foods_origin, sizeof(prev_game->foods_origin));
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
-        Coord pos = next_game->foods_origin[i];
+        Coord pos = random_empty_coord_on_board(next_game);
         next_game->foods[pos.y][pos.x] = 1;
     }
 
-    memcpy(next_game->walls, prev_game->walls, sizeof(prev_game->walls));
+    for (size_t i = 0; i < WALLS_COUNT; ++i) {
+        Coord pos = random_empty_coord_on_board(next_game);
+        next_game->walls[pos.y][pos.x] = 1;
+    }
 
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
         size_t p1 = random_int_range(0, SELECTION_POOL);

@@ -92,7 +92,6 @@ void print_agent(FILE *stream, const Agent *agent);
 
 typedef struct {
     Agent agents[AGENTS_COUNT];
-    Coord foods_origin[FOODS_COUNT];
     int foods[BOARD_HEIGHT][BOARD_WIDTH];
     int walls[BOARD_HEIGHT][BOARD_WIDTH];
 } Game;
