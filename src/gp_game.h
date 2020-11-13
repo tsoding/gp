@@ -91,17 +91,12 @@ typedef struct {
 void print_agent(FILE *stream, const Agent *agent);
 
 typedef struct {
-    int eaten;
-    Coord pos;
-} Food;
-
-typedef struct {
     Coord pos;
 } Wall;
 
 typedef struct {
     Agent agents[AGENTS_COUNT];
-    Food foods[FOODS_COUNT];
+    int foods[BOARD_HEIGHT][BOARD_WIDTH];
     Wall walls[WALLS_COUNT];
 } Game;
 
@@ -118,7 +113,7 @@ int is_cell_empty(const Game *game, Coord pos);
 Agent *agent_at(Game *game, Coord coord);
 
 Coord coord_infront_of_agent(const Agent *agent);
-Food *food_infront_of_agent(Game *game, size_t agent_index);
+int *food_infront_of_agent(Game *game, size_t agent_index);
 Agent *agent_infront_of_agent(Game *game, size_t agent_index);
 Wall *wall_infront_of_agent(Game *game, size_t agent_index);
 Env env_infront_of_agent(Game *game, size_t agent_index);

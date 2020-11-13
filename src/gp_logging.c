@@ -54,11 +54,13 @@ void log_generation(FILE *stream, int gen, Game *game)
     }
   }
 
-  int food_eaten = 0;
-  for (size_t i = 0; i < FOODS_COUNT; ++i) {
-    if (game->foods[i].eaten) {
-      food_eaten++;
-    }
+  int food_eaten = FOODS_COUNT;
+  for (size_t y = 0; y < BOARD_HEIGHT; ++y) {
+      for (size_t x = 0; x < BOARD_WIDTH; ++x) {
+          if (game->foods[y][x]) {
+              food_eaten--;
+          }
+      }
   }
 
   /* Writing to log file*/

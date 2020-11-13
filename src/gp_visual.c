@@ -41,14 +41,16 @@ void render_game(SDL_Renderer *renderer, const Game *game)
         }
     }
 
-    for (size_t i = 0; i < FOODS_COUNT; ++i) {
-        if (!game->foods[i].eaten) {
-            filledCircleRGBA(
-                renderer,
-                (int) floorf(game->foods[i].pos.x * CELL_WIDTH + CELL_WIDTH * 0.5f),
-                (int) floorf(game->foods[i].pos.y * CELL_HEIGHT + CELL_HEIGHT * 0.5f),
-                (int) floorf(fminf(CELL_WIDTH, CELL_HEIGHT) * 0.5f - FOOD_PADDING),
-                HEX_COLOR(FOOD_COLOR));
+    for (int y = 0; y < BOARD_HEIGHT; ++y) {
+        for (int x = 0; x < BOARD_WIDTH; ++x) {
+            if (game->foods[y][x]) {
+                filledCircleRGBA(
+                    renderer,
+                    (int) floorf(x * CELL_WIDTH + CELL_WIDTH * 0.5f),
+                    (int) floorf(y * CELL_HEIGHT + CELL_HEIGHT * 0.5f),
+                    (int) floorf(fminf(CELL_WIDTH, CELL_HEIGHT) * 0.5f - FOOD_PADDING),
+                    HEX_COLOR(FOOD_COLOR));
+            }
         }
     }
 
