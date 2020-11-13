@@ -83,10 +83,8 @@ int is_cell_empty(const Game *game, Coord pos)
         return 0;
     }
 
-    for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        if (coord_equals(game->walls[i].pos, pos)) {
-            return 0;
-        }
+    if (game->walls_[pos.y][pos.x]) {
+        return 0;
     }
 
     return 1;
@@ -138,7 +136,8 @@ void init_game(Game *game)
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        game->walls[i].pos = random_empty_coord_on_board(game);
+        Coord pos = random_empty_coord_on_board(game);
+        game->walls_[pos.y][pos.x] = 1;
     }
 }
 
@@ -217,14 +216,12 @@ Agent *agent_infront_of_agent(Game *game, size_t agent_index)
     return NULL;
 }
 
-Wall *wall_infront_of_agent(Game *game, size_t agent_index)
+int *wall_infront_of_agent(Game *game, size_t agent_index)
 {
     Coord infront = coord_infront_of_agent(&game->agents[agent_index]);
 
-    for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        if (coord_equals(infront, game->walls[i].pos)) {
-            return &game->walls[i];
-        }
+    if (game->walls_[infront.y][infront.x]) {
+        return &game->walls_[infront.y][infront.x];
     }
 
     return NULL;
@@ -267,7 +264,7 @@ void execute_action(Game *game, size_t agent_index, Action action)
     case ACTION_STEP: {
         int *food = food_infront_of_agent(game, agent_index);
         Agent *other_agent = agent_infront_of_agent(game, agent_index);
-        Wall *wall = wall_infront_of_agent(game, agent_index);
+        int *wall = wall_infront_of_agent(game, agent_index);
 
         if (food != NULL) {
             *food = 0;
@@ -407,9 +404,7 @@ void make_next_generation(Game *prev_game, Game *next_game)
         next_game->foods[pos.y][pos.x] = 1;
     }
 
-    for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        next_game->walls[i].pos = prev_game->walls[i].pos;
-    }
+    memcpy(next_game->walls_, prev_game->walls_, sizeof(prev_game->walls_));
 
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
         size_t p1 = random_int_range(0, SELECTION_POOL);

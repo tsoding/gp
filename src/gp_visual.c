@@ -51,19 +51,19 @@ void render_game(SDL_Renderer *renderer, const Game *game)
                     (int) floorf(fminf(CELL_WIDTH, CELL_HEIGHT) * 0.5f - FOOD_PADDING),
                     HEX_COLOR(FOOD_COLOR));
             }
+
+            if (game->walls_[y][x]) {
+                SDL_Rect rect = {
+                    (int) floorf(x * CELL_WIDTH),
+                    (int) floorf(y * CELL_HEIGHT),
+                    (int) floorf(CELL_WIDTH),
+                    (int) floorf(CELL_HEIGHT),
+                };
+
+                SDL_SetRenderDrawColor(renderer, HEX_COLOR(WALL_COLOR));
+
+                SDL_RenderFillRect(renderer, &rect);
+            }
         }
-    }
-
-    for (size_t i = 0; i < WALLS_COUNT; ++i) {
-        SDL_Rect rect = {
-            (int) floorf(game->walls[i].pos.x * CELL_WIDTH),
-            (int) floorf(game->walls[i].pos.y * CELL_HEIGHT),
-            (int) floorf(CELL_WIDTH),
-            (int) floorf(CELL_HEIGHT),
-        };
-
-        SDL_SetRenderDrawColor(renderer, HEX_COLOR(WALL_COLOR));
-
-        SDL_RenderFillRect(renderer, &rect);
     }
 }

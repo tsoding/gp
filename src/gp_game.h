@@ -91,14 +91,10 @@ typedef struct {
 void print_agent(FILE *stream, const Agent *agent);
 
 typedef struct {
-    Coord pos;
-} Wall;
-
-typedef struct {
     Agent agents[AGENTS_COUNT];
     Coord foods_origin[FOODS_COUNT];
     int foods[BOARD_HEIGHT][BOARD_WIDTH];
-    Wall walls[WALLS_COUNT];
+    int walls_[BOARD_HEIGHT][BOARD_WIDTH];
 } Game;
 
 int random_int_range(int low, int high);
@@ -116,7 +112,7 @@ Agent *agent_at(Game *game, Coord coord);
 Coord coord_infront_of_agent(const Agent *agent);
 int *food_infront_of_agent(Game *game, size_t agent_index);
 Agent *agent_infront_of_agent(Game *game, size_t agent_index);
-Wall *wall_infront_of_agent(Game *game, size_t agent_index);
+int *wall_infront_of_agent(Game *game, size_t agent_index);
 Env env_infront_of_agent(Game *game, size_t agent_index);
 
 void init_game(Game *game);
