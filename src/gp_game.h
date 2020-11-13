@@ -16,6 +16,9 @@
 #define STATES_COUNT 7
 #define MUTATION_CHANCE 100
 #define SELECTION_POOL 50
+static_assert(
+    SELECTION_POOL <= AGENTS_COUNT,
+    "Selection pool is bigger than amount of agents we have.");
 
 static_assert(
     AGENTS_COUNT + FOODS_COUNT + WALLS_COUNT <= BOARD_WIDTH * BOARD_HEIGHT,
