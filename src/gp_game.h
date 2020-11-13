@@ -110,6 +110,7 @@ Agent *agent_at(Game *game, Coord coord);
 
 Coord coord_infront_of_agent(const Agent *agent);
 int *food_infront_of_agent(Game *game, size_t agent_index);
+// TODO: implement O(1) lookup for agents
 Agent *agent_infront_of_agent(Game *game, size_t agent_index);
 int *wall_infront_of_agent(Game *game, size_t agent_index);
 Env env_infront_of_agent(Game *game, size_t agent_index);
