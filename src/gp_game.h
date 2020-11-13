@@ -96,6 +96,7 @@ typedef struct {
 
 typedef struct {
     Agent agents[AGENTS_COUNT];
+    Coord foods_origin[FOODS_COUNT];
     int foods[BOARD_HEIGHT][BOARD_WIDTH];
     Wall walls[WALLS_COUNT];
 } Game;
