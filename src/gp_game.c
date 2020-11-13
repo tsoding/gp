@@ -83,7 +83,7 @@ int is_cell_empty(const Game *game, Coord pos)
         return 0;
     }
 
-    if (game->walls_[pos.y][pos.x]) {
+    if (game->walls[pos.y][pos.x]) {
         return 0;
     }
 
@@ -137,7 +137,7 @@ void init_game(Game *game)
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
         Coord pos = random_empty_coord_on_board(game);
-        game->walls_[pos.y][pos.x] = 1;
+        game->walls[pos.y][pos.x] = 1;
     }
 }
 
@@ -220,8 +220,8 @@ int *wall_infront_of_agent(Game *game, size_t agent_index)
 {
     Coord infront = coord_infront_of_agent(&game->agents[agent_index]);
 
-    if (game->walls_[infront.y][infront.x]) {
-        return &game->walls_[infront.y][infront.x];
+    if (game->walls[infront.y][infront.x]) {
+        return &game->walls[infront.y][infront.x];
     }
 
     return NULL;
@@ -404,7 +404,7 @@ void make_next_generation(Game *prev_game, Game *next_game)
         next_game->foods[pos.y][pos.x] = 1;
     }
 
-    memcpy(next_game->walls_, prev_game->walls_, sizeof(prev_game->walls_));
+    memcpy(next_game->walls, prev_game->walls, sizeof(prev_game->walls));
 
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
         size_t p1 = random_int_range(0, SELECTION_POOL);

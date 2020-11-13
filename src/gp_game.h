@@ -94,7 +94,7 @@ typedef struct {
     Agent agents[AGENTS_COUNT];
     Coord foods_origin[FOODS_COUNT];
     int foods[BOARD_HEIGHT][BOARD_WIDTH];
-    int walls_[BOARD_HEIGHT][BOARD_WIDTH];
+    int walls[BOARD_HEIGHT][BOARD_WIDTH];
 } Game;
 
 int random_int_range(int low, int high);

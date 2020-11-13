@@ -52,7 +52,7 @@ void render_game(SDL_Renderer *renderer, const Game *game)
                     HEX_COLOR(FOOD_COLOR));
             }
 
-            if (game->walls_[y][x]) {
+            if (game->walls[y][x]) {
                 SDL_Rect rect = {
                     (int) floorf(x * CELL_WIDTH),
                     (int) floorf(y * CELL_HEIGHT),
