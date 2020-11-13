@@ -1,5 +1,5 @@
 PKGS=sdl2 SDL2_gfx
-CFLAGS=-Wall -Wold-style-definition -ggdb -std=c11 -pedantic `pkg-config --cflags $(PKGS)`
+CFLAGS=-Wall -Wold-style-definition -ggdb -O3 -std=c11 -pedantic `pkg-config --cflags $(PKGS)`
 LIBS=`pkg-config --libs $(PKGS)` -lm
 COMMON_SRC=src/gp_game.h src/gp_game.c src/gp_visual.h src/gp_visual.c
 
