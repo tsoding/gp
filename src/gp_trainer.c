@@ -90,12 +90,13 @@ int main(int argc, char *argv[])
     for (int i = 0; i < generations_count; ++i) {
         printf("Generation %d... ", i);
         fflush(stdout);
-
+        int lifetime = 0;
         clock_t begin = clock();
         while (!is_everyone_dead(&games[current])) {
             step_game(&games[current]);
+            lifetime++;
         }
-        printf("%fs\n", (float)(clock() - begin) / (float) CLOCKS_PER_SEC);
+        printf("%fs (%d max lifetime)\n", (float)(clock() - begin) / (float) CLOCKS_PER_SEC, lifetime);
         fflush(stdout);
 
         if (gnuplot) {
