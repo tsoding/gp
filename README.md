@@ -4,7 +4,9 @@ Just a Playground Repo for my Genetic Programming experiments. I have no prior e
 
 ![demo](./assets/demo.png)
 
-The development of this project was performed live on [https://twitch.tv/tsoding](https://twitch.tv/tsoding). Every stream is archived on YouTube and can be found in [this playlist](https://www.youtube.com/playlist?list=PLpM-Dvs8t0VZhPhStYD0aS30Y1awAv-DO).
+- The development of this project was performed live on [https://twitch.tv/tsoding](https://twitch.tv/tsoding). 
+- Every stream is archived on YouTube and can be found in [this playlist](https://www.youtube.com/playlist?list=PLpM-Dvs8t0VZhPhStYD0aS30Y1awAv-DO).
+- Highlights made by [@kolumb](https://github.com/kolumb): [https://www.youtube.com/playlist?list=PL9aFTwX54fqWWCBuBUGzawg_E7SFwgDoz](https://www.youtube.com/playlist?list=PL9aFTwX54fqWWCBuBUGzawg_E7SFwgDoz)
 
 ## Idea
 
