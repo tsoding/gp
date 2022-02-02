@@ -73,21 +73,11 @@ Coord random_coord_on_board(void)
 
 int is_cell_empty(const Game *game, Coord pos)
 {
-    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        if (coord_equals(game->agents[i].pos, pos)) {
-            return 0;
-        }
+    if (game->env_map[pos.y][pos.x]>=ENV_MAP_AGENTS) {
+			  return game->agents[game->env_map[pos.y][pos.x]-ENV_MAP_AGENTS].health<=0;
     }
 
-    if (game->foods[pos.y][pos.x]) {
-        return 0;
-    }
-
-    if (game->walls[pos.y][pos.x]) {
-        return 0;
-    }
-
-    return 1;
+    return game->env_map[pos.y][pos.x]==ENV_MAP_NONE;
 }
 
 Coord random_empty_coord_on_board(const Game *game)
@@ -114,7 +104,9 @@ void init_game(Game *game)
     memset(game, 0, sizeof(*game));
 
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        game->agents[i].pos = random_empty_coord_on_board(game);
+				Coord pos = random_empty_coord_on_board(game);
+				game->env_map[pos.y][pos.x] = ENV_MAP_AGENTS + i;
+        game->agents[i].pos = pos;
         game->agents[i].dir = random_dir();
         game->agents[i].hunger = HUNGER_MAX;
         game->agents[i].health = HEALTH_MAX;
@@ -131,12 +123,12 @@ void init_game(Game *game)
 
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
         Coord pos = random_empty_coord_on_board(game);
-        game->foods[pos.y][pos.x] = 1;
+        game->env_map[pos.y][pos.x] = ENV_MAP_FOOD;
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
         Coord pos = random_empty_coord_on_board(game);
-        game->walls[pos.y][pos.x] = 1;
+        game->env_map[pos.y][pos.x] = ENV_MAP_WALL;
     }
 }
 
@@ -192,25 +184,28 @@ Coord coord_infront_of_agent(const Agent *agent)
     return result;
 }
 
-void step_agent(Agent *agent)
+void step_agent(Game *game, size_t agent_index)
 {
-    Coord d = coord_dirs[agent->dir];
-    agent->pos.x = mod_int(agent->pos.x + d.x, BOARD_WIDTH);
-    agent->pos.y = mod_int(agent->pos.y + d.y, BOARD_HEIGHT);
+		Agent *agent = &game->agents[agent_index];
+    Coord new_pos = coord_infront_of_agent(agent);
+		game->env_map[agent->pos.y][agent->pos.x] = ENV_MAP_NONE; // set prev tile to empty
+    agent->pos.x = new_pos.x;
+    agent->pos.y = new_pos.y;
+		game->env_map[agent->pos.y][agent->pos.x] = ENV_MAP_AGENTS + agent_index; // register infront tile to agent
 }
 
 Agent *agent_infront_of_agent(Game *game, size_t agent_index)
 {
     Coord infront = coord_infront_of_agent(&game->agents[agent_index]);
+		int env = game->env_map[infront.y][infront.x];
 
-    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        if (i != agent_index &&
-            game->agents[i].health > 0 &&
-            coord_equals(infront, game->agents[i].pos))
-        {
-            return &game->agents[i];
-        }
-    }
+		if(env >= ENV_MAP_AGENTS) {
+			int infront_agent_index = env - ENV_MAP_AGENTS;
+			if(infront_agent_index != agent_index &&
+			    game->agents[infront_agent_index].health>0) {
+				return &game->agents[infront_agent_index];
+			}
+		}
 
     return NULL;
 }
@@ -219,8 +214,8 @@ int *wall_infront_of_agent(Game *game, size_t agent_index)
 {
     Coord infront = coord_infront_of_agent(&game->agents[agent_index]);
 
-    if (game->walls[infront.y][infront.x]) {
-        return &game->walls[infront.y][infront.x];
+    if (game->env_map[infront.y][infront.x] == ENV_MAP_WALL) {
+        return &game->env_map[infront.y][infront.x];
     }
 
     return NULL;
@@ -230,8 +225,8 @@ int *food_infront_of_agent(Game *game, size_t agent_index)
 {
     Coord infront = coord_infront_of_agent(&game->agents[agent_index]);
 
-    if (game->foods[infront.y][infront.x]) {
-        return &game->foods[infront.y][infront.x];
+    if (game->env_map[infront.y][infront.x] == ENV_MAP_FOOD) {
+        return &game->env_map[infront.y][infront.x];
     }
 
     return NULL;
@@ -261,26 +256,27 @@ void execute_action(Game *game, size_t agent_index, Action action)
         break;
 
     case ACTION_STEP: {
-        int *food = food_infront_of_agent(game, agent_index);
-        Agent *other_agent = agent_infront_of_agent(game, agent_index);
-        int *wall = wall_infront_of_agent(game, agent_index);
+				Coord infront = coord_infront_of_agent(&game->agents[agent_index]);
+        int *env = &game->env_map[infront.y][infront.x];
+				Agent *other_agent = agent_at(game, infront);
 
-        if (food != NULL) {
-            *food = 0;
+        if (*env == ENV_MAP_FOOD) {
+            *env = ENV_MAP_NONE; // set food tile to empty
             game->agents[agent_index].hunger += FOOD_HUNGER_RECOVERY;
             if (game->agents[agent_index].hunger > HUNGER_MAX) {
                 game->agents[agent_index].hunger = HUNGER_MAX;
             }
-            step_agent(&game->agents[agent_index]);
         } else if (other_agent != NULL) {
             other_agent->health -= ATTACK_DAMAGE;
 
             if (other_agent->health <= 0) {
+            		*env = ENV_MAP_NONE; // set other_agent tile to empty
                 game->agents[agent_index].hunger += FOOD_HUNGER_RECOVERY;
-                step_agent(&game->agents[agent_index]);
             }
-        } else if (wall == NULL) {
-            step_agent(&game->agents[agent_index]);
+        }
+
+				if (*env == ENV_MAP_NONE) { // only move agent if infront tile is empty
+            step_agent(game, agent_index);
         }
     } break;
 
@@ -292,7 +288,7 @@ void execute_action(Game *game, size_t agent_index, Action action)
         game->agents[agent_index].dir = mod_int(game->agents[agent_index].dir - 1, 4);
         break;
 
-    case ACTION_COUNT:
+    default: /* compiler assistant for changes in Action */
         assert(0 && "Unreachable");
         break;
     }
@@ -325,11 +321,10 @@ void step_game(Game *game)
 
 Agent *agent_at(Game *game, Coord pos)
 {
-    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        if (coord_equals(game->agents[i].pos, pos)) {
-            return &game->agents[i];
-        }
-    }
+		int env = game->env_map[pos.y][pos.x];
+    if(env >= ENV_MAP_AGENTS) {
+			return &game->agents[env];
+		}
 
     return NULL;
 }
@@ -399,12 +394,12 @@ void make_next_generation(Game *prev_game, Game *next_game)
 
     for (size_t i = 0; i < FOODS_COUNT; ++i) {
         Coord pos = random_empty_coord_on_board(next_game);
-        next_game->foods[pos.y][pos.x] = 1;
+        next_game->env_map[pos.y][pos.x] = ENV_MAP_FOOD;
     }
 
     for (size_t i = 0; i < WALLS_COUNT; ++i) {
         Coord pos = random_empty_coord_on_board(next_game);
-        next_game->walls[pos.y][pos.x] = 1;
+        next_game->env_map[pos.y][pos.x] = ENV_MAP_WALL;
     }
 
     for (size_t i = 0; i < AGENTS_COUNT; ++i) {
@@ -416,7 +411,9 @@ void make_next_generation(Game *prev_game, Game *next_game)
                     &next_game->agents[i]);
         mutate_agent(&next_game->agents[i]);
 
-        next_game->agents[i].pos = random_empty_coord_on_board(next_game);
+				Coord pos = random_empty_coord_on_board(next_game);
+        next_game->env_map[pos.y][pos.x] = ENV_MAP_AGENTS + i; // register tile for agent[i]
+        next_game->agents[i].pos = pos;
         next_game->agents[i].dir = random_dir();
         next_game->agents[i].hunger = HUNGER_MAX;
         next_game->agents[i].health = HEALTH_MAX;
