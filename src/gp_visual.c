@@ -35,15 +35,11 @@ void render_agent(SDL_Renderer *renderer, Agent agent)
 
 void render_game(SDL_Renderer *renderer, const Game *game)
 {
-    for (size_t i = 0; i < AGENTS_COUNT; ++i) {
-        if (game->agents[i].health > 0) {
-            render_agent(renderer, game->agents[i]);
-        }
-    }
-
     for (int y = 0; y < BOARD_HEIGHT; ++y) {
         for (int x = 0; x < BOARD_WIDTH; ++x) {
-            if (game->foods[y][x]) {
+						int env = game->env_map[y][x];
+
+            if (env == ENV_MAP_FOOD) {
                 filledCircleRGBA(
                     renderer,
                     (int) floorf(x * CELL_WIDTH + CELL_WIDTH * 0.5f),
@@ -52,7 +48,7 @@ void render_game(SDL_Renderer *renderer, const Game *game)
                     HEX_COLOR(FOOD_COLOR));
             }
 
-            if (game->walls[y][x]) {
+            else if (env == ENV_MAP_WALL) {
                 SDL_Rect rect = {
                     (int) floorf(x * CELL_WIDTH),
                     (int) floorf(y * CELL_HEIGHT),
@@ -64,6 +60,13 @@ void render_game(SDL_Renderer *renderer, const Game *game)
 
                 SDL_RenderFillRect(renderer, &rect);
             }
+
+						else if(env >= ENV_MAP_AGENTS) {
+							int agent_index = env - ENV_MAP_AGENTS;
+							if (game->agents[agent_index].health > 0) {
+									render_agent(renderer, game->agents[agent_index]);
+							}
+						}
         }
     }
 }

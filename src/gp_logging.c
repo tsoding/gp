@@ -57,7 +57,7 @@ void log_generation(FILE *stream, int gen, Game *game)
   int food_eaten = FOODS_COUNT;
   for (size_t y = 0; y < BOARD_HEIGHT; ++y) {
       for (size_t x = 0; x < BOARD_WIDTH; ++x) {
-          if (game->foods[y][x]) {
+          if (game->env_map[y][x] == ENV_MAP_FOOD) {
               food_eaten--;
           }
       }

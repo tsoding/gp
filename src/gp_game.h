@@ -93,10 +93,17 @@ typedef struct {
 
 void print_agent(FILE *stream, const Agent *agent);
 
+// TODO: use Env type
+// TODO: Change env_map to struct
+// maybe other env types need to store additional data like agents
+#define ENV_MAP_NONE 0
+#define ENV_MAP_WALL 1
+#define ENV_MAP_FOOD 2
+#define ENV_MAP_AGENTS 3
+
 typedef struct {
     Agent agents[AGENTS_COUNT];
-    int foods[BOARD_HEIGHT][BOARD_WIDTH];
-    int walls[BOARD_HEIGHT][BOARD_WIDTH];
+    int env_map[BOARD_HEIGHT][BOARD_WIDTH];
 } Game;
 
 int random_int_range(int low, int high);
@@ -112,10 +119,13 @@ int is_cell_empty(const Game *game, Coord pos);
 Agent *agent_at(Game *game, Coord coord);
 
 Coord coord_infront_of_agent(const Agent *agent);
+/** deprecated */
 int *food_infront_of_agent(Game *game, size_t agent_index);
-// TODO: implement O(1) lookup for agents
+/** deprecated */
 Agent *agent_infront_of_agent(Game *game, size_t agent_index);
+/** deprecated */
 int *wall_infront_of_agent(Game *game, size_t agent_index);
+/** deprecated */
 Env env_infront_of_agent(Game *game, size_t agent_index);
 
 void init_game(Game *game);
@@ -125,7 +135,7 @@ void load_game(const char *filepath, Game *game);
 
 int is_everyone_dead(const Game *game);
 
-void step_agent(Agent *agent);
+void step_agent(Game *game, size_t agent_index);
 void execute_action(Game *game, size_t agent_index, Action action);
 void step_game(Game *game);
 
