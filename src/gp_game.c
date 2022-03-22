@@ -277,6 +277,9 @@ void execute_action(Game *game, size_t agent_index, Action action)
 
             if (other_agent->health <= 0) {
                 game->agents[agent_index].hunger += FOOD_HUNGER_RECOVERY;
+                if (game->agents[agent_index].hunger > HUNGER_MAX) {
+                    game->agents[agent_index].hunger = HUNGER_MAX;
+                }
                 step_agent(&game->agents[agent_index]);
             }
         } else if (wall == NULL) {
